@@ -48,6 +48,7 @@ body.album {
  
  .song-item-number {
      width: 15%;
+     max-width:50px;
  }
 
  th.song-item-number {

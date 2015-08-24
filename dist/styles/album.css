@@ -48,6 +48,10 @@ body.album {
  
  .song-item-number {
      width: 15%;
+<<<<<<< HEAD
+=======
+     max-width:50px;
+>>>>>>> checkpoint-4-controllers
  }
 
  th.song-item-number {
