@@ -7,9 +7,24 @@ angular.module('blocJams', ['ui.router']);
         requireBase: false
      	});
      	
-		$stateProvider.state('album', {
-		    url: '/album',
-		    controller: 'Album.controller',
-		    templateUrl: '/templates/album.html'
-		});
+		$stateProvider
+			.state('landing', {
+		    	url: '/landing',
+		    	controller: 'Landing.controller',
+		    	templateUrl: '/templates/landing.html'
+			})
+			.state('', {
+		        url: '/album',
+		        controller: 'Album.controller',
+		        templateUrl: '/templates/album.html'
+      		})
+      		.state('collection', {
+          		url: '/collection',
+          		controller: 'Collection.controller',
+          		templateUrl: '/templates/collection.html'
+      		});
  });
+
+
+
+ 
