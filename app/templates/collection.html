@@ -1,15 +1,15 @@
 
          <section class="album-covers container">
          <div class="clearfix" ng-controller="Collection.controller">
-         	<div class="collection-album-container column fourth" ng-repeat="i in getNumber(number) track by $index">
-         		<a ui-sref="album"><img src="{{ picasso.albumArtUrl }}"></a>
+         	<div class="collection-album-container column fourth" ng-repeat="album in albums track by $index">
+         		<a ui-sref="album"><img src="{{ album.albumArtUrl }}"></a>
          		<div class="collection-album-info caption">
          		<p>
-         			<a class="album-name" ui-sref="album">{{ picasso.name }}</a>
+         			<a class="album-name" ui-sref="album">{{ album.name }}</a>
          			<br/>
-         			<a ui-sref="album">{{ picasso.artist }}</a>
+         			<a ui-sref="album">{{ album.artist }}</a>
          			<br/>
-         			{{ picasso.songs.length }} songs
+         			{{ album.songs.length }} songs
          			<br/>
          		</p>
          		</div>

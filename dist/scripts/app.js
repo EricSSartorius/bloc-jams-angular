@@ -1,6 +1,5 @@
-var blocJams = angular.module('blocJams', ['ui.router']);
-
-	blocJams.config(function($stateProvider, $locationProvider) {
+angular.module('blocJams', ['ui.router'])
+	.config(function($stateProvider, $locationProvider) {
 
  	    $locationProvider.html5Mode({
         enabled: true,
@@ -23,21 +22,42 @@ var blocJams = angular.module('blocJams', ['ui.router']);
           		controller: 'Collection.controller',
           		templateUrl: '/templates/collection.html',
       		});
-	});
-
- blocJams.controller('Landing.controller', function ($scope) {
+	})
+.controller('Landing.controller', function ($scope, $rootScope) {
  	$scope.landingTitle = 'Turn the music up!';
- });
+ 	$rootScope.bodyClass = "landing";
 
- blocJams.controller('Album.controller', function ($scope) {
+ 	var points = document.getElementsByClassName('point');       
+    var revealPoint = function(){
+        for(var i = 0; i < 3; i++){
+            points[i].style.opacity = 1;
+            points[i].style.transform = "scaleX(1) translateY(0)";
+            points[i].style.msTransform = "scaleX(1) translateY(0)";
+            points[i].style.WebkitTransform = "scaleX(1) translateY(0)";   
+        }
+    };
+    revealPoint();   
+ 	   //  var revealPoint = function() {
+	    //     $(this).css({
+	    //          opacity: 1,
+	    //          transform: 'scaleX(1) translateY(0)',
+	    //      });
+	    
+	    // };
+	    // angular.forEach(points, revealPoint)
+	    // $.each($('.point'), revealPoint);
+ })
+.controller('Album.controller', function ($scope, $rootScope) {
  	$scope.picasso = albumPicasso;
- });
-
- blocJams.controller('Collection.controller', function ($scope) {
- 	$scope.picasso = albumPicasso;
- 	$scope.number = 12;
-	$scope.getNumber = function(num) {
-    	return new Array(num);   
-	}
+ 	$rootScope.bodyClass = "album";
+ })
+.controller('Collection.controller', function ($scope, $rootScope) {
+ // 	$scope.picasso = albumPicasso;
+ // 	$scope.number = 12;
+	// $scope.getNumber = function(num) {
+ //    	return new Array(num);   
+	// }
+	$scope.albums = [albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits];
+	$rootScope.bodyClass = "collection";
  });
  
