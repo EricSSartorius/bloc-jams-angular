@@ -1,4 +1,4 @@
-angular.module('blocJams', ['ui.router'])
+angular.module('blocJams', ['ui.router', 'services'])
 	.config(function($stateProvider, $locationProvider) {
 
  	    $locationProvider.html5Mode({
@@ -47,9 +47,27 @@ angular.module('blocJams', ['ui.router'])
 	    // angular.forEach(points, revealPoint)
 	    // $.each($('.point'), revealPoint);
  })
-.controller('Album.controller', function ($scope, $rootScope) {
- 	$scope.picasso = albumPicasso;
+.controller('Album.controller', function ($scope, $rootScope, MusicPlayer) {
+ 	$scope.album = albumPicasso;
  	$rootScope.bodyClass = "album";
+ 	$scope.togglePlay = true;
+
+    $scope.togglePlayPause = function() {
+    	// MusicPlayer.togglePlayFromPlayerBar();
+    	$scope.togglePlay = $scope.togglePlay === MusicPlayer.togglePlayFromPlayerBar();
+    };
+ 	$scope.pauseSong = function(song) {
+         MusicPlayer.pause();
+    };
+    $scope.playSong = function(song) {
+         MusicPlayer.play();
+    };
+	$scope.nextSong = function(song) {
+         MusicPlayer.nextSong();
+    };
+    $scope.previousSong = function(song) {
+         MusicPlayer.previousSong();
+    };
  })
 .controller('Collection.controller', function ($scope, $rootScope) {
  // 	$scope.picasso = albumPicasso;
@@ -60,4 +78,3 @@ angular.module('blocJams', ['ui.router'])
 	$scope.albums = [albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits];
 	$rootScope.bodyClass = "collection";
  });
- 

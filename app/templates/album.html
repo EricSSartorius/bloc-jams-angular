@@ -1,34 +1,36 @@
 
-
          <main class="album-view container narrow">
-             <section class="clearfix">
+             <section class="clearfix" ng-controller="Album.controller">
                  <div class="column half">
-                     <img class="album-cover-art" src="{{ picasso.albumArtUrl }}">
+                     <img class="album-cover-art" src="{{ album.albumArtUrl }}">
                  </div>
                  <div class="album-view-details column half">
-                     <h2 class="album-view-title">{{ picasso.name }}</h2>
-                     <h3 class="album-view-artist">{{ picasso.artist }}</h3>
+                     <h2 class="album-view-title">{{ album.name }}</h2>
+                     <h3 class="album-view-artist">{{ album.artist }}</h3>
                      <h5 class="album-view-release-info">1909 Spanish Records</h5>
                  </div>
              </section>
-                <table class="album-view-song-list" >
-                    <tr class="album-view-song-item" ng-repeat="albumPicasso in picasso.songs">
-                        <td class="song-item-number" data-song-number="' + songNumber + '">{{ $index + 1 }}</td>
-                        <td class="song-item-title">{{ picasso.songs[$index].name }}</td>
-                        <td class="song-item-duration">{{ picasso.songs[$index].length }}</td>
+                <table class="album-view-song-list">
+                    <tr class="album-view-song-item" ng-repeat="albumPicasso in album.songs">
+                        <td class="song-item-number" ng-hide="false" data-song-number="' + songNumber + '">{{ $index + 1 }}</td>
+                        <td class="song-item-number" ng-hide="true" data-song-number="' + songNumber + '"><a class="album-song-button" ><span class="ion-play"></span></a></td>
+                        <td class="song-item-number" ng-hide="true" data-song-number="' + songNumber + '"><a class="album-song-button" ><span class="ion-pause"></span></a>
+                        <td class="song-item-title">{{ album.songs[$index].name }}</td>
+                        <td class="song-item-duration">{{ album.songs[$index].length }}</td>
                     </tr>
                 </table>
          </main>
          <section class="player-bar">
              <div class="container">
                  <div class="player-bar-control-group left-controls">
-                    <a class="previous">
+                    <a class="previous" ng-click="previousSong()">
                         <span class="ion-skip-backward"></span>
                     </a>
-                    <a class="play-pause">
-                        <span class="ion-play"></span>
+                    <a class="play-pause" ng-click="togglePlayPause()">
+                        <span class="ion-pause" ng-hide="togglePlay"></span>
+                        <span class="ion-play" ng-show="togglePlay"></span>
                     </a>
-                    <a class="next">
+                    <a class="next" ng-click="nextSong()">
                         <span class="ion-skip-forward"></span>
                     </a>
                  </div>
