@@ -11,13 +11,16 @@
                  </div>
              </section>
                 <table class="album-view-song-list">
-                    <tr class="album-view-song-item" ng-repeat="albumPicasso in album.songs">
-                        <td class="song-item-number" ng-hide="false" data-song-number="' + songNumber + '">{{ $index + 1 }}</td>
-                        <td class="song-item-number" ng-hide="true" data-song-number="' + songNumber + '"><a class="album-song-button" ><span class="ion-play"></span></a></td>
-                        <td class="song-item-number" ng-hide="true" data-song-number="' + songNumber + '"><a class="album-song-button" ><span class="ion-pause"></span></a>
-                        <td class="song-item-title">{{ album.songs[$index].name }}</td>
-                        <td class="song-item-duration">{{ album.songs[$index].length }}</td>
+                    <tr ng-repeat="song in album.songs" class="album-view-song-item" >
+                        <td class="song-item-number" ng-mouseenter="enterHover()" ng-mouseleave="leaveHover();" data-song-number="' + songNumber + '">
+                        <span ng-hide="hideTrack">{{ $index + 1 }}</span>
+                        <a ng-click="playSong($index)" ng-show="showPlay"  class="album-song-button" ><span class="ion-play"></span></a>
+                        <a ng-hide="true" class="album-song-button" ><span class="ion-pause"></span></a>
+                        </td>
+                        <td class="song-item-title">{{ song.name }}</td>
+                        <td class="song-item-duration">{{ song.length }}</td>
                     </tr>
+                </tbody>
                 </table>
          </main>
          <section class="player-bar">

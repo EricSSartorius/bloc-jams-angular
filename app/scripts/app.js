@@ -1,4 +1,4 @@
-angular.module('blocJams', ['ui.router', 'services'])
+angular.module('blocJams', ['ui.router'])
 	.config(function($stateProvider, $locationProvider) {
 
  	    $locationProvider.html5Mode({
@@ -49,17 +49,30 @@ angular.module('blocJams', ['ui.router', 'services'])
  })
 .controller('Album.controller', function ($scope, $rootScope, MusicPlayer) {
  	$scope.album = albumPicasso;
+ 	MusicPlayer.setCurrentAlbum(albumPicasso);
  	$rootScope.bodyClass = "album";
  	$scope.togglePlay = true;
 
+ 	$scope.setVolume = function() {
+         MusicPlayer.setVolume(volume);
+    };
     $scope.togglePlayPause = function() {
     	// MusicPlayer.togglePlayFromPlayerBar();
     	$scope.togglePlay = $scope.togglePlay === MusicPlayer.togglePlayFromPlayerBar();
     };
+    $scope.enterHover = function() {
+    	this.showPlay = true;
+    	this.hideTrack = true;
+    };
+    $scope.leaveHover = function() {
+    	this.showPlay = false;
+    	this.hideTrack = false;
+    };
  	$scope.pauseSong = function(song) {
          MusicPlayer.pause();
     };
-    $scope.playSong = function(song) {
+    $scope.playSong = function(index) {
+         MusicPlayer.setSong(index+1);
          MusicPlayer.play();
     };
 	$scope.nextSong = function(song) {
@@ -77,4 +90,136 @@ angular.module('blocJams', ['ui.router', 'services'])
 	// }
 	$scope.albums = [albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits];
 	$rootScope.bodyClass = "collection";
- });
+ })
+.factory('MusicPlayer', function() {
+
+    var currentAlbum = null;
+    var currentlyPlayingSongNumber = null;
+    var currentSongFromAlbum = null;
+    var currentSoundFile = null;
+    var currentSongDuration = null;
+    var currentVolume = 80;
+
+    var trackIndex = function(album, song) {
+        return album.songs.indexOf(song);
+    };
+
+    
+
+    resetSong = function(){
+        var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
+        if (currentSoundFile.isEnded()){
+             if (currentSongIndex >= currentAlbum.songs.length -1) {
+                currentSoundFile.stop();
+                $('.album-song-button').html(playButtonTemplate);
+                $('.left-controls .play-pause').html(playerBarPlayButton);
+             }  
+             else {
+                nextSong();
+            }
+        }
+    };
+    
+
+    return { 
+	    setCurrentAlbum: function(album) {
+	         currentAlbum = album;
+	         for (i = 0; i < album.songs.length; i++) {
+	            var sound = new buzz.sound(album.songs[i].audioUrl, {  formats: [ 'mp3' ],   preload: 'metadata'  });
+	             var mySound = function(i,sound){
+	                return function(){
+	                    var length = sound.getDuration();
+	                }
+	            };
+	            sound.bind("loadedmetadata", mySound(i,sound));
+	         }    
+	    },
+    	setSong: function(songNumber) {
+	        if (currentSoundFile) {
+	            currentSoundFile.stop();
+	        }
+	        currentlyPlayingSongNumber = songNumber;
+	        currentSongFromAlbum = currentAlbum.songs[songNumber - 1];
+	        //currentSongDuration = currentSongDurations[songNumber - 1];
+	        currentSoundFile = new buzz.sound(currentSongFromAlbum.audioUrl, {
+	            formats: [ 'mp3' ],
+	            preload: true
+	        });
+	        this.setVolume(currentVolume);
+	    },
+    	setVolume: function(volume) {
+        	if (currentSoundFile) {
+            	currentSoundFile.setVolume(volume);
+         	}
+     	},
+
+        togglePlayFromPlayerBar: function(){
+                if (currentlyPlayingSongNumber === null){
+                    return nextSong();
+                    return false;
+                }
+                if(currentSoundFile.isPaused()) {
+                    currentSoundFile.play();
+                    return false;
+                }
+                else if(currentSoundFile) {
+                    currentSoundFile.pause();
+                    return true;
+                }
+        },
+        onHover: function(event) {
+	        var songNumberCell = $(this).find('.song-item-number');
+	        var songNumber = parseInt(songNumberCell.attr('data-song-number'));
+
+	        if (songNumber !== currentlyPlayingSongNumber) {
+	            songNumberCell.html(playButtonTemplate);
+	        }
+    	},
+    	offHover: function(event) {
+	        var songNumberCell = $(this).find('.song-item-number');
+	        var songNumber = parseInt(songNumberCell.attr('data-song-number'));
+
+	        if (songNumber !== currentlyPlayingSongNumber) {
+	            songNumberCell.html(songNumber);
+	        }
+    	},
+        pause: function() {
+            this.playing = false;
+            currentSoundFile.pause();
+        },
+        play: function() {
+            this.playing = true;
+            currentSoundFile.play();
+        },
+        nextSong: function() {
+            var getLastSongNumber = function(index) {
+        		return index == 0 ? currentAlbum.songs.length : index;
+    		};
+    		var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
+    		currentSongIndex++;
+    		if (currentSongIndex >= currentAlbum.songs.length) {
+        		currentSongIndex = 0;
+    		}
+    		setSong(currentSongIndex + 1);
+    		currentSoundFile.play();
+    		updateSeekBarWhileSongPlays();
+    		updatePlayerBarSong();
+    		var lastSongNumber = getLastSongNumber(currentSongIndex);
+        },
+        previousSong: function() {
+        	var getLastSongNumber = function(index) {
+        		return index == (currentAlbum.songs.length - 1) ? 1 : index + 2;
+    		};
+        	var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
+        	currentSongIndex--;
+        	if (currentSongIndex < 0) {
+            	currentSongIndex = currentAlbum.songs.length - 1;
+        	}
+        	setSong(currentSongIndex + 1);
+        	currentSoundFile.play();
+        	updateSeekBarWhileSongPlays();
+        	updatePlayerBarSong();
+        	var lastSongNumber = getLastSongNumber(currentSongIndex);
+        }
+    };
+});
