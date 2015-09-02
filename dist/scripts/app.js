@@ -57,8 +57,8 @@ angular.module('blocJams', ['ui.router'])
          MusicPlayer.setVolume(volume);
     };
     $scope.togglePlayPause = function() {
-    	// MusicPlayer.togglePlayFromPlayerBar();
-    	$scope.togglePlay = $scope.togglePlay === MusicPlayer.togglePlayFromPlayerBar();
+    	MusicPlayer.togglePlayFromPlayerBar();
+    	$scope.togglePlay = ! $scope.togglePlay;
     };
     $scope.enterHover = function() {
     	this.showPlay = true;
@@ -88,12 +88,12 @@ angular.module('blocJams', ['ui.router'])
     // 		$scope.playSong();
     // 	}
     // };
- 	$scope.pauseSong = function(song) {
-        MusicPlayer.setSong(index+1);
-        MusicPlayer.pause();
+ 	$scope.pauseSong = function() {
+      //MusicPlayer.setSong(index+1);
+      MusicPlayer.pause();
 
-        $scope.togglePlay = true;
-        this.showPlay = true;
+      $scope.togglePlay = true;
+      this.showPlay = true;
     	this.showPause= false;
     	this.hideTrack = true;
     	this.playing = false;
