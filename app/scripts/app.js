@@ -62,18 +62,52 @@ angular.module('blocJams', ['ui.router'])
     };
     $scope.enterHover = function() {
     	this.showPlay = true;
+    	this.showPause= false;
     	this.hideTrack = true;
+    	if(this.playing) {
+    		this.showPlay = false;
+    		this.showPause= true;
+    		this.hideTrack = true;
+    	}
     };
     $scope.leaveHover = function() {
     	this.showPlay = false;
+    	this.showPause = false;
     	this.hideTrack = false;
+    	if(this.playing) {
+    		this.showPlay = false;
+    		this.showPause= true;
+    		this.hideTrack = true;
+    	}
     };
+    // $scope.clickHandler = function() {
+    // 	if($scope.playSong()) {
+    // 		$scope.pauseSong();
+    // 	}
+    // 	else {
+    // 		$scope.playSong();
+    // 	}
+    // };
  	$scope.pauseSong = function(song) {
-         MusicPlayer.pause();
+        MusicPlayer.setSong(index+1);
+        MusicPlayer.pause();
+
+        $scope.togglePlay = true;
+        this.showPlay = true;
+    	this.showPause= false;
+    	this.hideTrack = true;
+    	this.playing = false;
     };
     $scope.playSong = function(index) {
-         MusicPlayer.setSong(index+1);
-         MusicPlayer.play();
+        MusicPlayer.setSong(index+1);
+        MusicPlayer.play();
+
+        $scope.togglePlay = false;
+        this.showPlay = false;
+    	this.showPause= true;
+    	this.playing = true;
+    	this.hideTrack = true;
+
     };
 	$scope.nextSong = function(song) {
          MusicPlayer.nextSong();
@@ -167,28 +201,26 @@ angular.module('blocJams', ['ui.router'])
                     return true;
                 }
         },
-        onHover: function(event) {
-	        var songNumberCell = $(this).find('.song-item-number');
-	        var songNumber = parseInt(songNumberCell.attr('data-song-number'));
+     //    onHover: function(event) {
+	        
 
-	        if (songNumber !== currentlyPlayingSongNumber) {
-	            songNumberCell.html(playButtonTemplate);
-	        }
-    	},
-    	offHover: function(event) {
-	        var songNumberCell = $(this).find('.song-item-number');
-	        var songNumber = parseInt(songNumberCell.attr('data-song-number'));
+	    //     if (songNumber !== currentlyPlayingSongNumber) {
+	    //         this.showPlay = true;
+	    //         this.showPause = false;
+	    //         this.hideTrack = true;
+	    //     }
+    	// },
+    	// offHover: function(event) {
 
-	        if (songNumber !== currentlyPlayingSongNumber) {
-	            songNumberCell.html(songNumber);
-	        }
-    	},
+
+	    //     if (songNumber !== currentlyPlayingSongNumber) {
+	    //         songNumberCell.html(songNumber);
+	    //     }
+    	// },
         pause: function() {
-            this.playing = false;
             currentSoundFile.pause();
         },
         play: function() {
-            this.playing = true;
             currentSoundFile.play();
         },
         nextSong: function() {

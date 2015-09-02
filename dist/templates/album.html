@@ -12,10 +12,10 @@
              </section>
                 <table class="album-view-song-list">
                     <tr ng-repeat="song in album.songs" class="album-view-song-item" >
-                        <td class="song-item-number" ng-mouseenter="enterHover()" ng-mouseleave="leaveHover();" data-song-number="' + songNumber + '">
+                        <td class="song-item-number" ng-mouseenter="enterHover()" ng-mouseleave="leaveHover()" data-song-number="' + songNumber + '">
                         <span ng-hide="hideTrack">{{ $index + 1 }}</span>
                         <a ng-click="playSong($index)" ng-show="showPlay"  class="album-song-button" ><span class="ion-play"></span></a>
-                        <a ng-hide="true" class="album-song-button" ><span class="ion-pause"></span></a>
+                        <a ng-show="showPause" class="album-song-button" ><span class="ion-pause"></span></a>
                         </td>
                         <td class="song-item-title">{{ song.name }}</td>
                         <td class="song-item-duration">{{ song.length }}</td>
