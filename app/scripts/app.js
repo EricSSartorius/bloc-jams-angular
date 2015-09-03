@@ -57,8 +57,7 @@ angular.module('blocJams', ['ui.router'])
          MusicPlayer.setVolume(volume);
     };
     $scope.togglePlayPause = function() {
-    	// MusicPlayer.togglePlayFromPlayerBar();
-    	$scope.togglePlay = $scope.togglePlay === MusicPlayer.togglePlayFromPlayerBar();
+    	$scope.togglePlay = MusicPlayer.togglePlayFromPlayerBar();
     };
     $scope.enterHover = function() {
     	this.showPlay = true;
@@ -80,14 +79,6 @@ angular.module('blocJams', ['ui.router'])
     		this.hideTrack = true;
     	}
     };
-    // $scope.clickHandler = function() {
-    // 	if($scope.playSong()) {
-    // 		$scope.pauseSong();
-    // 	}
-    // 	else {
-    // 		$scope.playSong();
-    // 	}
-    // };
  	$scope.pauseSong = function(song) {
         MusicPlayer.setSong(index+1);
         MusicPlayer.pause();
@@ -216,6 +207,14 @@ angular.module('blocJams', ['ui.router'])
 	    //     if (songNumber !== currentlyPlayingSongNumber) {
 	    //         songNumberCell.html(songNumber);
 	    //     }
+    	// },
+    	// clickHandler: function() {
+    	// 	if(currentSoundFile.isPaused()) {
+    	// 		currentSoundFile.play();
+    	// 	}
+    	// 	else{
+    	// 		currentSoundFile.pause();
+    	// 	}
     	// },
         pause: function() {
             currentSoundFile.pause();

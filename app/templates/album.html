@@ -7,7 +7,7 @@
                  <div class="album-view-details column half">
                      <h2 class="album-view-title">{{ album.name }}</h2>
                      <h3 class="album-view-artist">{{ album.artist }}</h3>
-                     <h5 class="album-view-release-info">1909 Spanish Records</h5>
+                     <h5 class="album-view-release-info">{{ album.year + " " + album.label }}</h5>
                  </div>
              </section>
                 <table class="album-view-song-list">
@@ -26,14 +26,14 @@
          <section class="player-bar">
              <div class="container">
                  <div class="player-bar-control-group left-controls">
-                    <a class="previous" ng-click="previousSong()">
+                    <a class="previous" ng-click="previousSong(song)">
                         <span class="ion-skip-backward"></span>
                     </a>
                     <a class="play-pause" ng-click="togglePlayPause()">
                         <span class="ion-pause" ng-hide="togglePlay"></span>
                         <span class="ion-play" ng-show="togglePlay"></span>
                     </a>
-                    <a class="next" ng-click="nextSong()">
+                    <a class="next" ng-click="nextSong(song)">
                         <span class="ion-skip-forward"></span>
                     </a>
                  </div>
