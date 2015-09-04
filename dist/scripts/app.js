@@ -26,7 +26,6 @@ angular.module('blocJams', ['ui.router'])
 .controller('Landing.controller', function ($scope, $rootScope) {
  	$scope.landingTitle = 'Turn the music up!';
  	$rootScope.bodyClass = "landing";
-
  	var points = document.getElementsByClassName('point');       
     var revealPoint = function(){
         for(var i = 0; i < 3; i++){
@@ -37,68 +36,78 @@ angular.module('blocJams', ['ui.router'])
         }
     };
     revealPoint();   
- 	   //  var revealPoint = function() {
-	    //     $(this).css({
-	    //          opacity: 1,
-	    //          transform: 'scaleX(1) translateY(0)',
-	    //      });
-	    
-	    // };
-	    // angular.forEach(points, revealPoint)
-	    // $.each($('.point'), revealPoint);
  })
 .controller('Album.controller', function ($scope, $rootScope, MusicPlayer) {
  	$scope.album = albumPicasso;
  	MusicPlayer.setCurrentAlbum(albumPicasso);
  	$rootScope.bodyClass = "album";
  	$scope.togglePlay = true;
+ 	$scope.playingTrackIndex = null;
 
  	$scope.setVolume = function() {
          MusicPlayer.setVolume(volume);
     };
     $scope.togglePlayPause = function() {
     	$scope.togglePlay = MusicPlayer.togglePlayFromPlayerBar();
-    };
-    $scope.enterHover = function() {
-    	this.showPlay = true;
-    	this.showPause= false;
-    	this.hideTrack = true;
-    	if(this.playing) {
-    		this.showPlay = false;
-    		this.showPause= true;
-    		this.hideTrack = true;
+    	if($scope.togglePlay === true){
+	    	$scope.showPlay = true;
+	    	$scope.showPause= false;
+	    	$scope.hideTrack = true;
+    	}
+    	else if ($scope.togglePlay === false){
+			$scope.showPlay = false;
+    		$scope.showPause= true;
+    		$scope.hideTrack = true;
     	}
     };
-    $scope.leaveHover = function() {
-    	this.showPlay = false;
-    	this.showPause = false;
-    	this.hideTrack = false;
-    	if(this.playing) {
-    		this.showPlay = false;
-    		this.showPause= true;
-    		this.hideTrack = true;
+    $scope.enterHover = function(index) {
+    	$scope.playingTrackIndex = MusicPlayer.currentlyPlayingSongNumber;
+    	$scope.showPlay = true;
+    	$scope.showPause= false;
+    	$scope.hideTrack = true;
+    	if($scope.playing) {
+    		$scope.showPlay = false;
+    		$scope.showPause= true;
+    		$scope.hideTrack = true;
     	}
     };
- 	$scope.pauseSong = function(song) {
-        MusicPlayer.setSong(index+1);
-        MusicPlayer.pause();
-
-        $scope.togglePlay = true;
-        this.showPlay = true;
-    	this.showPause= false;
-    	this.hideTrack = true;
-    	this.playing = false;
+    $scope.leaveHover = function(index) {
+		$scope.playingTrackIndex = MusicPlayer.currentlyPlayingSongNumber;
+    	$scope.showPlay = false;
+    	$scope.showPause = false;
+    	$scope.hideTrack = false;
+    	if($scope.playing) {
+    		$scope.showPlay = false;
+    		$scope.showPause= true;
+    		$scope.hideTrack = true;
+    	}
+    };
+    // $scope.hideShow = function() {
+    // 	if($scope.showPlay || $scope.showPause) {
+    // 		$scope.hideTrack = true;
+    // 	}
+    // 	else{
+    // 		$scope.hideTrack = false;
+    // 	}
+    // };
+ 	$scope.pauseSong = function(index) {
+      　MusicPlayer.pause();
+        $scope.playingTrackIndex = MusicPlayer.currentlyPlayingSongNumber;
+      　$scope.togglePlay = true;
+        $scope.showPlay = true;
+    	$scope.showPause= false;
+    	$scope.hideTrack = true;
+    	$scope.playing = false;
     };
     $scope.playSong = function(index) {
         MusicPlayer.setSong(index+1);
+        $scope.playingTrackIndex = MusicPlayer.currentlyPlayingSongNumber;
         MusicPlayer.play();
-
         $scope.togglePlay = false;
-        this.showPlay = false;
-    	this.showPause= true;
-    	this.playing = true;
-    	this.hideTrack = true;
-
+        $scope.showPlay = false;
+    	$scope.showPause= true;
+    	$scope.playing = true;
+    	$scope.hideTrack = true; // simplify the view to look at both showPause and showPlay
     };
 	$scope.nextSong = function(song) {
          MusicPlayer.nextSong();
@@ -108,16 +117,10 @@ angular.module('blocJams', ['ui.router'])
     };
  })
 .controller('Collection.controller', function ($scope, $rootScope) {
- // 	$scope.picasso = albumPicasso;
- // 	$scope.number = 12;
-	// $scope.getNumber = function(num) {
- //    	return new Array(num);   
-	// }
 	$scope.albums = [albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits];
 	$rootScope.bodyClass = "collection";
  })
 .factory('MusicPlayer', function() {
-
     var currentAlbum = null;
     var currentlyPlayingSongNumber = null;
     var currentSongFromAlbum = null;
@@ -128,9 +131,6 @@ angular.module('blocJams', ['ui.router'])
     var trackIndex = function(album, song) {
         return album.songs.indexOf(song);
     };
-
-    
-
     resetSong = function(){
         var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
         if (currentSoundFile.isEnded()){
@@ -144,7 +144,6 @@ angular.module('blocJams', ['ui.router'])
             }
         }
     };
-    
 
     return { 
 	    setCurrentAlbum: function(album) {
@@ -177,10 +176,9 @@ angular.module('blocJams', ['ui.router'])
             	currentSoundFile.setVolume(volume);
          	}
      	},
-
         togglePlayFromPlayerBar: function(){
                 if (currentlyPlayingSongNumber === null){
-                    return nextSong();
+                    return this.nextSong();
                     return false;
                 }
                 if(currentSoundFile.isPaused()) {
@@ -192,30 +190,6 @@ angular.module('blocJams', ['ui.router'])
                     return true;
                 }
         },
-     //    onHover: function(event) {
-	        
-
-	    //     if (songNumber !== currentlyPlayingSongNumber) {
-	    //         this.showPlay = true;
-	    //         this.showPause = false;
-	    //         this.hideTrack = true;
-	    //     }
-    	// },
-    	// offHover: function(event) {
-
-
-	    //     if (songNumber !== currentlyPlayingSongNumber) {
-	    //         songNumberCell.html(songNumber);
-	    //     }
-    	// },
-    	// clickHandler: function() {
-    	// 	if(currentSoundFile.isPaused()) {
-    	// 		currentSoundFile.play();
-    	// 	}
-    	// 	else{
-    	// 		currentSoundFile.pause();
-    	// 	}
-    	// },
         pause: function() {
             currentSoundFile.pause();
         },
@@ -231,10 +205,10 @@ angular.module('blocJams', ['ui.router'])
     		if (currentSongIndex >= currentAlbum.songs.length) {
         		currentSongIndex = 0;
     		}
-    		setSong(currentSongIndex + 1);
+    		this.setSong(currentSongIndex + 1);
     		currentSoundFile.play();
-    		updateSeekBarWhileSongPlays();
-    		updatePlayerBarSong();
+    		// updateSeekBarWhileSongPlays();
+    		// updatePlayerBarSong();
     		var lastSongNumber = getLastSongNumber(currentSongIndex);
         },
         previousSong: function() {
@@ -246,10 +220,10 @@ angular.module('blocJams', ['ui.router'])
         	if (currentSongIndex < 0) {
             	currentSongIndex = currentAlbum.songs.length - 1;
         	}
-        	setSong(currentSongIndex + 1);
+        	this.setSong(currentSongIndex + 1);
         	currentSoundFile.play();
-        	updateSeekBarWhileSongPlays();
-        	updatePlayerBarSong();
+        	// updateSeekBarWhileSongPlays();
+        	// updatePlayerBarSong();
         	var lastSongNumber = getLastSongNumber(currentSongIndex);
         }
     };
