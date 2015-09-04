@@ -61,26 +61,28 @@ angular.module('blocJams', ['ui.router'])
     	}
     };
     $scope.enterHover = function(index) {
-    	$scope.playingTrackIndex = MusicPlayer.currentlyPlayingSongNumber;
+      $scope.hoveredIndex = index;
+    	//$scope.playingTrackIndex = MusicPlayer.currentlyPlayingSongNumber;
     	$scope.showPlay = true;
-    	$scope.showPause= false;
-    	$scope.hideTrack = true;
-    	if($scope.playing) {
-    		$scope.showPlay = false;
-    		$scope.showPause= true;
-    		$scope.hideTrack = true;
-    	}
+    	//$scope.showPause= false;
+    	//$scope.hideTrack = true;
+    	//if($scope.playing) {
+    		//$scope.showPlay = false;
+    		//$scope.showPause= true;
+    		//$scope.hideTrack = true;
+    	//}
     };
     $scope.leaveHover = function(index) {
-		$scope.playingTrackIndex = MusicPlayer.currentlyPlayingSongNumber;
+      $scope.hoveredIndex = null;
+		  //$scope.playingTrackIndex = MusicPlayer.currentlyPlayingSongNumber;
     	$scope.showPlay = false;
-    	$scope.showPause = false;
-    	$scope.hideTrack = false;
-    	if($scope.playing) {
-    		$scope.showPlay = false;
-    		$scope.showPause= true;
-    		$scope.hideTrack = true;
-    	}
+    	//$scope.showPause = false;
+    	//$scope.hideTrack = false;
+    	//if($scope.playing) {
+    		//$scope.showPlay = false;
+    		//$scope.showPause= true;
+    		//$scope.hideTrack = true;
+    	//}
     };
     // $scope.hideShow = function() {
     // 	if($scope.showPlay || $scope.showPause) {
@@ -101,13 +103,13 @@ angular.module('blocJams', ['ui.router'])
     };
     $scope.playSong = function(index) {
         MusicPlayer.setSong(index+1);
-        $scope.playingTrackIndex = MusicPlayer.currentlyPlayingSongNumber;
+        $scope.playingTrackIndex = index;
         MusicPlayer.play();
         $scope.togglePlay = false;
         $scope.showPlay = false;
-    	$scope.showPause= true;
-    	$scope.playing = true;
-    	$scope.hideTrack = true; // simplify the view to look at both showPause and showPlay
+        $scope.showPause= true;
+        $scope.playing = true;
+        $scope.hideTrack = true; // simplify the view to look at both showPause and showPlay
     };
 	$scope.nextSong = function(song) {
          MusicPlayer.nextSong();

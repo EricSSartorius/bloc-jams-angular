@@ -13,9 +13,11 @@
                 <table class="album-view-song-list">
                     <tr ng-repeat="song in album.songs track by $index" class="album-view-song-item" >
                         <td class="song-item-number" ng-mouseenter="enterHover($index)" ng-mouseleave="leaveHover($index)" data-song-number="' + songNumber + '">
-                        <span ng-hide="hideTrack && playingTrackIndex === $index">{{ $index + 1 }}</span>
-                        <a ng-click="playSong($index)" ng-show="showPlay && playingTrackIndex === $index"  class="album-song-button" ><span class="ion-play"></span></a>
-                        <a ng-show="showPause && playingTrackIndex === $index" ng-click="pauseSong($index)" class="album-song-button" ><span class="ion-pause"></span></a>
+                        <span ng-hide="(hideTrack && playingTrackIndex === $index) || hoveredIndex === $index">{{ $index + 1 }}</span>
+                        <span ng-show="hoveredIndex === $index || playingTrackIndex === $index">
+                          <a ng-click="playSong($index)" ng-show="playingTrackIndex !== $index"  class="album-song-button" ><span class="ion-play"></span></a>
+                          <a ng-show="playingTrackIndex === $index" ng-click="pauseSong($index)" class="album-song-button" ><span class="ion-pause"></span></a>
+                        </span>
                         </td>
                         <td class="song-item-title">{{ song.name }}</td>
                         <td class="song-item-duration">{{ song.length }}</td>
