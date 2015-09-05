@@ -49,73 +49,39 @@ angular.module('blocJams', ['ui.router'])
     };
     $scope.togglePlayPause = function() {
     	$scope.togglePlay = MusicPlayer.togglePlayFromPlayerBar();
-    	if($scope.togglePlay === true){
-	    	$scope.showPlay = true;
-	    	$scope.showPause= false;
-	    	$scope.hideTrack = true;
-    	}
-    	else if ($scope.togglePlay === false){
-			$scope.showPlay = false;
-    		$scope.showPause= true;
-    		$scope.hideTrack = true;
-    	}
     };
     $scope.enterHover = function(index) {
-      $scope.hoveredIndex = index;
-    	//$scope.playingTrackIndex = MusicPlayer.currentlyPlayingSongNumber;
-    	$scope.showPlay = true;
-    	//$scope.showPause= false;
-    	//$scope.hideTrack = true;
-    	//if($scope.playing) {
-    		//$scope.showPlay = false;
-    		//$scope.showPause= true;
-    		//$scope.hideTrack = true;
-    	//}
+        $scope.hoveredIndex = index;
     };
     $scope.leaveHover = function(index) {
-      $scope.hoveredIndex = null;
-		  //$scope.playingTrackIndex = MusicPlayer.currentlyPlayingSongNumber;
-    	$scope.showPlay = false;
-    	//$scope.showPause = false;
-    	//$scope.hideTrack = false;
-    	//if($scope.playing) {
-    		//$scope.showPlay = false;
-    		//$scope.showPause= true;
-    		//$scope.hideTrack = true;
-    	//}
+        	$scope.hoveredIndex = null;
     };
-    // $scope.hideShow = function() {
-    // 	if($scope.showPlay || $scope.showPause) {
-    // 		$scope.hideTrack = true;
-    // 	}
-    // 	else{
-    // 		$scope.hideTrack = false;
-    // 	}
-    // };
+    $scope.hideTrack = function(index) {
+    	if($scope.hoveredIndex === index || $scope.playingTrackIndex === index) {
+    		return true;
+    	}
+    	else{
+    		return false;
+    	}
+    };
  	$scope.pauseSong = function(index) {
       　MusicPlayer.pause();
-        $scope.playingTrackIndex = MusicPlayer.currentlyPlayingSongNumber;
-      　$scope.togglePlay = true;
-        $scope.showPlay = true;
-    	$scope.showPause= false;
-    	$scope.hideTrack = true;
-    	$scope.playing = false;
+      	$scope.playingTrackIndex = MusicPlayer.currentlyPlayingSongNumber;
+      	$scope.togglePlay = true;
     };
     $scope.playSong = function(index) {
-        MusicPlayer.setSong(index+1);
-        $scope.playingTrackIndex = index;
-        MusicPlayer.play();
+	    MusicPlayer.setSong(index+1);
+	    $scope.playingTrackIndex = index;
+	    MusicPlayer.play();
+	    $scope.togglePlay = false;
+    };
+	$scope.nextSong = function() {
+        MusicPlayer.nextSong();
         $scope.togglePlay = false;
-        $scope.showPlay = false;
-        $scope.showPause= true;
-        $scope.playing = true;
-        $scope.hideTrack = true; // simplify the view to look at both showPause and showPlay
     };
-	$scope.nextSong = function(song) {
-         MusicPlayer.nextSong();
-    };
-    $scope.previousSong = function(song) {
-         MusicPlayer.previousSong();
+    $scope.previousSong = function() {
+        MusicPlayer.previousSong();
+        $scope.togglePlay = false;
     };
  })
 .controller('Collection.controller', function ($scope, $rootScope) {
@@ -127,25 +93,24 @@ angular.module('blocJams', ['ui.router'])
     var currentlyPlayingSongNumber = null;
     var currentSongFromAlbum = null;
     var currentSoundFile = null;
-    var currentSongDuration = null;
     var currentVolume = 80;
 
     var trackIndex = function(album, song) {
         return album.songs.indexOf(song);
     };
-    resetSong = function(){
-        var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
-        if (currentSoundFile.isEnded()){
-             if (currentSongIndex >= currentAlbum.songs.length -1) {
-                currentSoundFile.stop();
-                $('.album-song-button').html(playButtonTemplate);
-                $('.left-controls .play-pause').html(playerBarPlayButton);
-             }  
-             else {
-                nextSong();
-            }
-        }
-    };
+    // resetSong = function(){
+    //     var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
+    //     if (currentSoundFile.isEnded()){
+    //          if (currentSongIndex >= currentAlbum.songs.length -1) {
+    //             currentSoundFile.stop();
+    //             $('.album-song-button').html(playButtonTemplate);
+    //             $('.left-controls .play-pause').html(playerBarPlayButton);
+    //          }  
+    //          else {
+    //             this.nextSong();
+    //         }
+    //     }
+    // };
 
     return { 
 	    setCurrentAlbum: function(album) {
@@ -199,9 +164,9 @@ angular.module('blocJams', ['ui.router'])
             currentSoundFile.play();
         },
         nextSong: function() {
-            var getLastSongNumber = function(index) {
-        		return index == 0 ? currentAlbum.songs.length : index;
-    		};
+      //       var getLastSongNumber = function(index) {
+      //   		return index == 0 ? currentAlbum.songs.length : index;
+    		// };
     		var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
     		currentSongIndex++;
     		if (currentSongIndex >= currentAlbum.songs.length) {
@@ -211,12 +176,12 @@ angular.module('blocJams', ['ui.router'])
     		currentSoundFile.play();
     		// updateSeekBarWhileSongPlays();
     		// updatePlayerBarSong();
-    		var lastSongNumber = getLastSongNumber(currentSongIndex);
+    		// var lastSongNumber = getLastSongNumber(currentSongIndex);
         },
         previousSong: function() {
-        	var getLastSongNumber = function(index) {
-        		return index == (currentAlbum.songs.length - 1) ? 1 : index + 2;
-    		};
+      //   	var getLastSongNumber = function(index) {
+      //   		return index == (currentAlbum.songs.length - 1) ? 1 : index + 2;
+    		// };
         	var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
         	currentSongIndex--;
         	if (currentSongIndex < 0) {
@@ -226,7 +191,7 @@ angular.module('blocJams', ['ui.router'])
         	currentSoundFile.play();
         	// updateSeekBarWhileSongPlays();
         	// updatePlayerBarSong();
-        	var lastSongNumber = getLastSongNumber(currentSongIndex);
+        	// var lastSongNumber = getLastSongNumber(currentSongIndex);
         }
     };
 });

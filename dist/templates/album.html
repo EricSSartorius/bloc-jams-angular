@@ -13,7 +13,7 @@
                 <table class="album-view-song-list">
                     <tr ng-repeat="song in album.songs track by $index" class="album-view-song-item" >
                         <td class="song-item-number" ng-mouseenter="enterHover($index)" ng-mouseleave="leaveHover($index)" data-song-number="' + songNumber + '">
-                        <span ng-hide="(hideTrack && playingTrackIndex === $index) || hoveredIndex === $index">{{ $index + 1 }}</span>
+                        <span ng-hide="(hideTrack($index) && playingTrackIndex === $index) || hoveredIndex === $index">{{ $index + 1 }}</span>
                         <span ng-show="hoveredIndex === $index || playingTrackIndex === $index">
                           <a ng-click="playSong($index)" ng-show="playingTrackIndex !== $index"  class="album-song-button" ><span class="ion-play"></span></a>
                           <a ng-show="playingTrackIndex === $index" ng-click="pauseSong($index)" class="album-song-button" ><span class="ion-pause"></span></a>
@@ -28,14 +28,14 @@
          <section class="player-bar">
              <div class="container">
                  <div class="player-bar-control-group left-controls">
-                    <a class="previous" ng-click="previousSong(song)">
+                    <a class="previous" ng-click="previousSong()">
                         <span class="ion-skip-backward"></span>
                     </a>
                     <a class="play-pause" ng-click="togglePlayPause()">
-                        <span class="ion-pause" ng-hide="togglePlay"></span>
+                        <span class="ion-pause" ng-show="!togglePlay"></span>
                         <span class="ion-play" ng-show="togglePlay"></span>
                     </a>
-                    <a class="next" ng-click="nextSong(song)">
+                    <a class="next" ng-click="nextSong()">
                         <span class="ion-skip-forward"></span>
                     </a>
                  </div>
