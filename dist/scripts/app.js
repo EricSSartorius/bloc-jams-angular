@@ -43,7 +43,11 @@ angular.module('blocJams', ['ui.router'])
  	$rootScope.bodyClass = "album";
  	$scope.togglePlay = true;
  	$scope.playingTrackIndex = null;
+ 	$scope.hasStarted = false;
 
+ 	$scope.nameShow = function() {
+     return true;
+    };
  	$scope.setVolume = function() {
          MusicPlayer.setVolume(volume);
     };
@@ -64,23 +68,37 @@ angular.module('blocJams', ['ui.router'])
     		return false;
     	}
     };
+    $scope.isPaused = function() {
+     	if (MusicPlayer.isPaused()) {
+     		return true;
+     	}
+     	else {
+     		return false;
+     	}
+    };
  	$scope.pauseSong = function(index) {
       　MusicPlayer.pause();
-      	$scope.playingTrackIndex = MusicPlayer.currentlyPlayingSongNumber;
+      	$scope.playingTrackIndex = index;
       	$scope.togglePlay = true;
     };
     $scope.playSong = function(index) {
-	    MusicPlayer.setSong(index+1);
-	    $scope.playingTrackIndex = index;
-	    MusicPlayer.play();
-	    $scope.togglePlay = false;
+    	//when album finishes playing, set hasStarted to false
+	    if (!$scope.hasStarted) { 
+		    MusicPlayer.setSong(index+1);
+		    $scope.hasStarted = true;
+	    }
+		$scope.playingTrackIndex = index;
+		MusicPlayer.play();
+		$scope.togglePlay = false;
     };
 	$scope.nextSong = function() {
         MusicPlayer.nextSong();
+        // $scope.playingTrackIndex = MusicPlayer.currentSongnumber;
         $scope.togglePlay = false;
     };
     $scope.previousSong = function() {
         MusicPlayer.previousSong();
+
         $scope.togglePlay = false;
     };
  })
@@ -156,6 +174,15 @@ angular.module('blocJams', ['ui.router'])
                     currentSoundFile.pause();
                     return true;
                 }
+        },
+        isPaused: function() {
+            return currentSoundFile.isPaused();
+        },
+        ended: function() {
+            return currentSoundFile.isEnded();
+        },
+        getTime: function() {
+            return currentSoundFile.getTime();
         },
         pause: function() {
             currentSoundFile.pause();
