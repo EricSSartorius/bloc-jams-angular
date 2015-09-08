@@ -1,49 +1,58 @@
 
-
          <main class="album-view container narrow">
-             <section class="clearfix">
+             <section class="clearfix" ng-controller="Album.controller">
                  <div class="column half">
-                     <img class="album-cover-art" src="{{ picasso.albumArtUrl }}">
+                     <img class="album-cover-art" src="{{ album.albumArtUrl }}">
                  </div>
                  <div class="album-view-details column half">
-                     <h2 class="album-view-title">{{ picasso.name }}</h2>
-                     <h3 class="album-view-artist">{{ picasso.artist }}</h3>
-                     <h5 class="album-view-release-info">1909 Spanish Records</h5>
+                     <h2 class="album-view-title">{{ album.name }}</h2>
+                     <h3 class="album-view-artist">{{ album.artist }}</h3>
+                     <h5 class="album-view-release-info">{{ album.year }} {{ album.label }}</h5>
                  </div>
              </section>
-                <table class="album-view-song-list" >
-                    <tr class="album-view-song-item" ng-repeat="albumPicasso in picasso.songs">
-                        <td class="song-item-number" data-song-number="' + songNumber + '">{{ $index + 1 }}</td>
-                        <td class="song-item-title">{{ picasso.songs[$index].name }}</td>
-                        <td class="song-item-duration">{{ picasso.songs[$index].length }}</td>
+                <table class="album-view-song-list">
+                    <tr ng-repeat="song in album.songs track by $index" class="album-view-song-item" >
+                        <td class="song-item-number" ng-mouseenter="enterHover($index)" ng-mouseleave="leaveHover($index)" data-song-number="' + songNumber + '">
+                        <span ng-hide="(hideTrack($index) && playingTrackIndex === $index) || hoveredIndex === $index">{{ $index + 1 }}</span>
+                        <span ng-show="hoveredIndex === $index || playingTrackIndex === $index">
+                          <a ng-click="playSong($index)" ng-show="playingTrackIndex !== $index || (playingTrackIndex === $index && isPaused())"  class="album-song-button" ><span class="ion-play"></span></a>
+                          <a ng-click="pauseSong($index)" ng-show="playingTrackIndex === $index && !isPaused()"  class="album-song-button" ><span class="ion-pause"></span></a>
+                        </span>
+                        </td>
+                        <td class="song-item-title">{{ song.name }}</td>
+                        <td class="song-item-duration">{{ song.length }}</td>
                     </tr>
+                </tbody>
                 </table>
          </main>
          <section class="player-bar">
              <div class="container">
                  <div class="player-bar-control-group left-controls">
-                    <a class="previous">
+                    <a class="previous" ng-click="previousSong()">
                         <span class="ion-skip-backward"></span>
                     </a>
-                    <a class="play-pause">
-                        <span class="ion-play"></span>
+                    <a class="play-pause" ng-click="togglePlayPause()">
+                        <span class="ion-pause" ng-show="!togglePlay"></span>
+                        <span class="ion-play" ng-show="togglePlay"></span>
                     </a>
-                    <a class="next">
+                    <a class="next" ng-click="nextSong()">
                         <span class="ion-skip-forward"></span>
                     </a>
                  </div>
                  <div class="player-bar-control-group currently-playing">
-                     <h2 class="song-name"></h2>
-                    <h2 class="artist-song-mobile"></h2>
+                     <h2 ng-show="infoShow()" class="song-name">{{ album.songs[playingTrackIndex].name }}</h2>
+                    <h2 ng-show="infoShow()" class="artist-song-mobile">{{ album.songs[playingTrackIndex].name }} - {{ album.artist }}</h2>
                     <div class="seek-control">
                          <div class="seek-bar">
                              <div class="fill"></div>
                              <div class="thumb"></div>
                          </div>
-                         <div class="current-time">0:00</div>
-                         <div class="total-time">0:00</div>
+                         <div ng-show="infoShow()" class="current-time">{{ time[playingTrackIndex] }}</div>
+                         <div ng-hide="infoShow()" class="current-time">0:00</div>
+                         <div ng-show="infoShow()" class="total-time">{{ duration[playingTrackIndex] }}</div>
+                         <div ng-hide="infoShow()" class="total-time">0:00</div>
                      </div>
-                    <h3 class="artist-name"></h3>
+                    <h3 ng-show="infoShow()" class="artist-name">{{ album.artist }}</h3>
                  </div>
                  <div class="player-bar-control-group right-controls">
                     <div class="volume">
