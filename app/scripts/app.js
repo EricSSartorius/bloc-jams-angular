@@ -43,11 +43,23 @@ angular.module('blocJams', ['ui.router'])
  	$rootScope.bodyClass = "album";
  	$scope.togglePlay = true;
  	$scope.playingTrackIndex = null;
- 	
-
- 	$scope.nameShow = function() {
+ 
+ 	$scope.getDuration = function() {
+     	if($scope.playingTrackIndex !== null) {
+     		$scope.duration = MusicPlayer.getDuration();
+     	}
+    };
+	$scope.getTime = function() {
+     	if($scope.playingTrackIndex !== null) {
+     		$scope.time = MusicPlayer.getTime();
+     	}
+    };
+ 	$scope.infoShow = function() {
      	if($scope.playingTrackIndex !== null) {
      		return true;
+     	}
+     	else {
+     		return false;
      	}
     };
  	$scope.setVolume = function() {
@@ -86,17 +98,7 @@ angular.module('blocJams', ['ui.router'])
       	$scope.playingTrackIndex = index;
       	$scope.togglePlay = true;
     };
-    $scope.playSong = function(index) {
-		// if ($scope.playingTrackIndex === null) {
-					
-		// }
-		// else if ($scope.hasStarted && $scope.playingTrackIndex === index) {
-
-		// 	MusicPlayer.setSong(index+1);
-		// }
-		// else if ($scope.playingTrackIndex !== index) {
-		// 	MusicPlayer.setSong(index+1)	
-		// }		
+    $scope.playSong = function(index) {		
 		if ($scope.playingTrackIndex !== index){
 			MusicPlayer.setSong(index+1);
 		}
@@ -205,7 +207,7 @@ angular.module('blocJams', ['ui.router'])
             return currentSoundFile.getTime();
         },
         getDuration: function() {
-             var timer = buzz.toTimer( mySound.getDuration() );
+            currentSoundFile.getDuration();
         },
         pause: function() {
             currentSoundFile.pause();

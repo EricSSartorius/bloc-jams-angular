@@ -40,17 +40,19 @@
                     </a>
                  </div>
                  <div class="player-bar-control-group currently-playing">
-                     <h2 ng-show="nameShow()" class="song-name">{{ album.songs[playingTrackIndex].name }}</h2>
-                    <h2 ng-show="nameShow()" class="artist-song-mobile">{{ album.songs[playingTrackIndex].name }} - {{ album.artist }}</h2>
+                     <h2 ng-show="infoShow()" class="song-name">{{ album.songs[playingTrackIndex].name }}</h2>
+                    <h2 ng-show="infoShow()" class="artist-song-mobile">{{ album.songs[playingTrackIndex].name }} - {{ album.artist }}</h2>
                     <div class="seek-control">
                          <div class="seek-bar">
                              <div class="fill"></div>
                              <div class="thumb"></div>
                          </div>
-                         <div class="current-time">{{ MusicPlayer.getTime() }}</div>
-                         <div class="total-time">{{ MusicPlayer.getDuration() }}</div>
+                         <div ng-show="infoShow()" class="current-time">{{ time[playingTrackIndex] }}</div>
+                         <div ng-hide="infoShow()" class="current-time">0:00</div>
+                         <div ng-show="infoShow()" class="total-time">{{ duration[playingTrackIndex] }}</div>
+                         <div ng-hide="infoShow()" class="total-time">0:00</div>
                      </div>
-                    <h3 ng-show="nameShow()" class="artist-name">{{ album.artist }}</h3>
+                    <h3 ng-show="infoShow()" class="artist-name">{{ album.artist }}</h3>
                  </div>
                  <div class="player-bar-control-group right-controls">
                     <div class="volume">
