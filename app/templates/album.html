@@ -1,6 +1,6 @@
 
          <main class="album-view container narrow">
-             <section class="clearfix" ng-controller="Album.controller">
+             <section class="clearfix">
                  <div class="column half">
                      <img class="album-cover-art" src="{{ album.albumArtUrl }}">
                  </div>
@@ -48,10 +48,9 @@
                                 <div class="fill"></div>
                                 <div class="thumb"></div>
                             </div>
-                       
-                         <div ng-show="infoShow()" class="current-time">{{ time[playingTrackIndex] | filterTime }}</div>
+                         <div ng-show="infoShow()" class="current-time">{{ time | filterTime }}</div>
                          <div ng-hide="infoShow()" class="current-time">{{ 0 | filterTime }}</div>
-                         <div ng-show="infoShow()" class="total-time">{{ duration[playingTrackIndex] | filterTime }}</div>
+                         <div ng-show="infoShow()" class="total-time">{{ duration | filterTime }}</div>
                          <div ng-hide="infoShow()" class="total-time">{{ 0 | filterTime }}</div>
                      </div>
                     <h3 ng-show="infoShow()" class="artist-name">{{ album.artist }}</h3>
