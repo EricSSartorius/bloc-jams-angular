@@ -45,13 +45,15 @@ angular.module('blocJams', ['ui.router'])
  	$rootScope.bodyClass = "album";
  	$scope.togglePlay = true;
  	$scope.playingTrackIndex = null;
+
+    // window.skope = $scope;
  
  	$scope.getDuration = function() {
      	if($scope.playingTrackIndex !== null) {
      		$scope.duration = MusicPlayer.getDuration();
      	}
     };
-	$scope.getTime = function() {
+	$scope.updateTime = function() {
      	if($scope.playingTrackIndex !== null) {
      		$scope.time = MusicPlayer.getTime();
      	}
@@ -66,65 +68,85 @@ angular.module('blocJams', ['ui.router'])
     };
  	$scope.setVolume = function() {
          MusicPlayer.setVolume(volume);
-    };
-    $scope.togglePlayPause = function() {
+  };
+  $scope.togglePlayPause = function() {
     	$scope.togglePlay = MusicPlayer.togglePlayFromPlayerBar();
     	if ($scope.playingTrackIndex === null) {
     		$scope.playingTrackIndex = 0;
+        MusicPlayer.registerProgressListener(function(){
+          $scope.$apply(function(){
+            $scope.updateTime();
+          })
+        });
     	}
-    };
-    $scope.enterHover = function(index) {
-        $scope.hoveredIndex = index;
-    };
-    $scope.leaveHover = function(index) {
-        	$scope.hoveredIndex = null;
-    };
-    $scope.hideTrack = function(index) {
+  };
+  $scope.enterHover = function(index) {
+      $scope.hoveredIndex = index;
+  };
+  $scope.leaveHover = function(index) {
+      $scope.hoveredIndex = null;
+  };
+  $scope.hideTrack = function(index) {
     	if($scope.hoveredIndex === index || $scope.playingTrackIndex === index) {
     		return true;
     	}
     	else{
     		return false;
     	}
-    };
-    $scope.isPaused = function() {
+  };
+  $scope.isPaused = function() {
      	if (MusicPlayer.isPaused()) {
      		return true;
      	}
      	else {
      		return false;
      	}
-    };
+  };
  	$scope.pauseSong = function(index) {
       　MusicPlayer.pause();
       	$scope.playingTrackIndex = index;
       	$scope.togglePlay = true;
-    };
-    $scope.playSong = function(index) {		
+  };
+  $scope.playSong = function(index) {		
 		if ($scope.playingTrackIndex !== index){
 			MusicPlayer.setSong(index+1);
 		}
 		$scope.playingTrackIndex = index;
 		MusicPlayer.play();
 		$scope.togglePlay = false;
-	
-    };
+	  MusicPlayer.registerProgressListener(function(){
+      $scope.$apply(function(){
+        $scope.updateTime();
+      })
+    });
+
+  };
 	$scope.nextSong = function() {
         MusicPlayer.nextSong();
         $scope.playingTrackIndex++;
+        MusicPlayer.registerProgressListener(function(){
+          $scope.$apply(function(){
+            $scope.updateTime();
+          })
+        });
         if ($scope.playingTrackIndex >= $scope.album.songs.length) {
         		$scope.playingTrackIndex = 0;
     		}
         $scope.togglePlay = false;
-    };
-    $scope.previousSong = function() {
-        MusicPlayer.previousSong();
+  };
+  $scope.previousSong = function() {
+      MusicPlayer.previousSong();
   		$scope.playingTrackIndex--;
-        if ($scope.playingTrackIndex < 0) {
-        		$scope.playingTrackIndex = $scope.album.songs.length - 1;
+      MusicPlayer.registerProgressListener(function(){
+          $scope.$apply(function(){
+            $scope.updateTime();
+          })
+      });
+      if ($scope.playingTrackIndex < 0) {
+        	$scope.playingTrackIndex = $scope.album.songs.length - 1;
     	}
-        $scope.togglePlay = false;
-    };
+      $scope.togglePlay = false;
+  };
  })
 .controller('Collection.controller', function ($scope, $rootScope) {
 	$scope.albums = [albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits];
@@ -185,57 +207,60 @@ angular.module('blocJams', ['ui.router'])
             	currentSoundFile.setVolume(volume);
          	}
      	},
-        togglePlayFromPlayerBar: function(){
-                if (currentlyPlayingSongNumber === null){
-                    return this.nextSong();
-                    return false;
-                }
-                if(currentSoundFile.isPaused()) {
-                    currentSoundFile.play();
-                    return false;
-                }
-                else if(currentSoundFile) {
-                    currentSoundFile.pause();
-                    return true;
-                }
-        },
-        isPaused: function() {
-            return currentSoundFile.isPaused();
-        },
-        ended: function() {
-            return currentSoundFile.isEnded();
-        },
-        getTime: function() {
-            return currentSoundFile.getTime();
-        },
-        getDuration: function() {
-            currentSoundFile.getDuration();
-        },
-        pause: function() {
-            currentSoundFile.pause();
-        },
-        play: function() {
-            currentSoundFile.play();
-        },
-        nextSong: function() {
-      //       var getLastSongNumber = function(index) {
+      togglePlayFromPlayerBar: function(){
+          if (currentlyPlayingSongNumber === null){
+              return this.nextSong();
+              return false;
+          }
+          if(currentSoundFile.isPaused()) {
+              currentSoundFile.play();
+              return false;
+          }
+          else if(currentSoundFile) {
+              currentSoundFile.pause();
+              return true;
+          }
+      },
+      isPaused: function() {
+          return currentSoundFile.isPaused();
+      },
+      ended: function() {
+          return currentSoundFile.isEnded();
+      },
+      getTime: function() {
+          return currentSoundFile.getTime();
+      },
+      registerProgressListener: function(listener){
+           currentSoundFile.bind("timeupdate", listener);
+      },
+      getDuration: function() {
+          currentSoundFile.getDuration();
+      },
+      pause: function() {
+          currentSoundFile.pause();
+      },
+      play: function() {
+          currentSoundFile.play();
+      },
+      nextSong: function() {
+      //      var getLastSongNumber = function(index) {
       //   		return index == 0 ? currentAlbum.songs.length : index;
-    		// };
-    		var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
-    		currentSongIndex++;
-    		if (currentSongIndex >= currentAlbum.songs.length) {
-        		currentSongIndex = 0;
-    		}
-    		this.setSong(currentSongIndex + 1);
-    		currentSoundFile.play();
-    		// updateSeekBarWhileSongPlays();
-    		// updatePlayerBarSong();
-    		// var lastSongNumber = getLastSongNumber(currentSongIndex);
-        },
-        previousSong: function() {
+    	// };
+       	var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
+       	currentSongIndex++;
+       	if (currentSongIndex >= currentAlbum.songs.length) {
+          		currentSongIndex = 0;
+       	}
+       	this.setSong(currentSongIndex + 1);
+       	currentSoundFile.play();
+       	// updateSeekBarWhileSongPlays();
+       	// updatePlayerBarSong();
+       	// var lastSongNumber = getLastSongNumber(currentSongIndex);
+      },
+      previousSong: function() {
       //   	var getLastSongNumber = function(index) {
       //   		return index == (currentAlbum.songs.length - 1) ? 1 : index + 2;
-    		// };
+    	// };
         	var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
         	currentSongIndex--;
         	if (currentSongIndex < 0) {
@@ -246,7 +271,7 @@ angular.module('blocJams', ['ui.router'])
         	// updateSeekBarWhileSongPlays();
         	// updatePlayerBarSong();
         	// var lastSongNumber = getLastSongNumber(currentSongIndex);
-        }
+      }
     };
 });
 
