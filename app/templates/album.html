@@ -15,7 +15,7 @@
                         <td class="song-item-number" ng-mouseenter="enterHover($index)" ng-mouseleave="leaveHover($index)" data-song-number="' + songNumber + '">
                         <span ng-hide="(hideTrack($index) && playingTrackIndex === $index) || hoveredIndex === $index">{{ $index + 1 }}</span>
                         <span ng-show="hoveredIndex === $index || playingTrackIndex === $index">
-                          <a ng-click="playSong($index)" ng-show="playingTrackIndex !== $index || (playingTrackIndex === $index && isPaused())"  class="album-song-button" ><span class="ion-play"></span></a>
+                          <a ng-click="playSong($index); listener()" ng-show="playingTrackIndex !== $index || (playingTrackIndex === $index && isPaused())"  class="album-song-button" ><span class="ion-play"></span></a>
                           <a ng-click="pauseSong($index)" ng-show="playingTrackIndex === $index && !isPaused()"  class="album-song-button" ><span class="ion-pause"></span></a>
                         </span>
                         </td>
@@ -28,14 +28,14 @@
          <section class="player-bar">
              <div class="container">
                  <div class="player-bar-control-group left-controls">
-                    <a class="previous" ng-click="previousSong()">
+                    <a class="previous" ng-click="previousSong(); listener()">
                         <span class="ion-skip-backward"></span>
                     </a>
-                    <a class="play-pause" ng-click="togglePlayPause()">
+                    <a class="play-pause" ng-click="togglePlayPause(); listener()">
                         <span class="ion-pause" ng-show="!togglePlay"></span>
                         <span class="ion-play" ng-show="togglePlay"></span>
                     </a>
-                    <a class="next" ng-click="nextSong()">
+                    <a class="next" ng-click="nextSong(); listener()">
                         <span class="ion-skip-forward"></span>
                     </a>
                  </div>

@@ -45,9 +45,17 @@ angular.module('blocJams', ['ui.router'])
  	$rootScope.bodyClass = "album";
  	$scope.togglePlay = true;
  	$scope.playingTrackIndex = null;
-
     // window.skope = $scope;
- 
+  $scope.listener = function() {
+    if (!$scope.togglePlay || ($scope.togglePlay && $scope.playingTrackIndex === null)) {
+      MusicPlayer.registerProgressListener(function(){
+          $scope.$apply(function(){
+            $scope.updateTime();
+            $scope.updateDuration();
+          })
+      });
+    }
+  };
  	$scope.updateDuration = function() {
      	if($scope.playingTrackIndex !== null) {
      		$scope.duration = MusicPlayer.getDuration();
@@ -59,12 +67,7 @@ angular.module('blocJams', ['ui.router'])
      	}
     };
  	$scope.infoShow = function() {
-     	if($scope.playingTrackIndex !== null) {
-     		return true;
-     	}
-     	else {
-     		return false;
-     	}
+     	return $scope.playingTrackIndex !== null;
     };
  	$scope.setVolume = function() {
          MusicPlayer.setVolume(volume);
@@ -73,12 +76,6 @@ angular.module('blocJams', ['ui.router'])
     	$scope.togglePlay = MusicPlayer.togglePlayFromPlayerBar();
     	if ($scope.playingTrackIndex === null) {
     		$scope.playingTrackIndex = 0;
-        MusicPlayer.registerProgressListener(function(){
-          $scope.$apply(function(){
-            $scope.updateTime();
-            $scope.updateDuration();
-          })
-        });
     	}
   };
   $scope.enterHover = function(index) {
@@ -88,20 +85,12 @@ angular.module('blocJams', ['ui.router'])
       $scope.hoveredIndex = null;
   };
   $scope.hideTrack = function(index) {
-    	if($scope.hoveredIndex === index || $scope.playingTrackIndex === index) {
-    		return true;
-    	}
-    	else{
-    		return false;
-    	}
+    	return $scope.hoveredIndex === index || $scope.playingTrackIndex === index;
+
   };
   $scope.isPaused = function() {
-     	if (MusicPlayer.isPaused()) {
-     		return true;
-     	}
-     	else {
-     		return false;
-     	}
+     	return MusicPlayer.isPaused();
+    
   };
  	$scope.pauseSong = function(index) {
       　MusicPlayer.pause();
@@ -115,23 +104,10 @@ angular.module('blocJams', ['ui.router'])
 		$scope.playingTrackIndex = index;
 		MusicPlayer.play();
 		$scope.togglePlay = false;
-	  MusicPlayer.registerProgressListener(function(){
-      $scope.$apply(function(){
-        $scope.updateTime();
-        $scope.updateDuration();
-      })
-    });
-
   };
 	$scope.nextSong = function() {
         MusicPlayer.nextSong();
         $scope.playingTrackIndex++;
-        MusicPlayer.registerProgressListener(function(){
-          $scope.$apply(function(){
-            $scope.updateTime();
-            $scope.updateDuration();
-          })
-        });
         if ($scope.playingTrackIndex >= $scope.album.songs.length) {
         		$scope.playingTrackIndex = 0;
     		}
@@ -140,12 +116,6 @@ angular.module('blocJams', ['ui.router'])
   $scope.previousSong = function() {
       MusicPlayer.previousSong();
   		$scope.playingTrackIndex--;
-      MusicPlayer.registerProgressListener(function(){
-          $scope.$apply(function(){
-            $scope.updateTime();
-            $scope.updateDuration();
-          })
-      });
       if ($scope.playingTrackIndex < 0) {
         	$scope.playingTrackIndex = $scope.album.songs.length - 1;
     	}
