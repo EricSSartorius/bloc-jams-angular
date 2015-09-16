@@ -46,11 +46,9 @@ angular.module('blocJams', ['ui.router'])
  	$scope.togglePlay = true;
  	$scope.playingTrackIndex = null;
 
-
     // window.skope = $scope;
-
  
- 	$scope.getDuration = function() {
+ 	$scope.updateDuration = function() {
      	if($scope.playingTrackIndex !== null) {
      		$scope.duration = MusicPlayer.getDuration();
      	}
@@ -78,6 +76,7 @@ angular.module('blocJams', ['ui.router'])
         MusicPlayer.registerProgressListener(function(){
           $scope.$apply(function(){
             $scope.updateTime();
+            $scope.updateDuration();
           })
         });
     	}
@@ -119,6 +118,7 @@ angular.module('blocJams', ['ui.router'])
 	  MusicPlayer.registerProgressListener(function(){
       $scope.$apply(function(){
         $scope.updateTime();
+        $scope.updateDuration();
       })
     });
 
@@ -129,6 +129,7 @@ angular.module('blocJams', ['ui.router'])
         MusicPlayer.registerProgressListener(function(){
           $scope.$apply(function(){
             $scope.updateTime();
+            $scope.updateDuration();
           })
         });
         if ($scope.playingTrackIndex >= $scope.album.songs.length) {
@@ -142,6 +143,7 @@ angular.module('blocJams', ['ui.router'])
       MusicPlayer.registerProgressListener(function(){
           $scope.$apply(function(){
             $scope.updateTime();
+            $scope.updateDuration();
           })
       });
       if ($scope.playingTrackIndex < 0) {
@@ -181,10 +183,10 @@ angular.module('blocJams', ['ui.router'])
     	setSong: function(songNumber) {
 	        if (currentSoundFile) {
 	            currentSoundFile.stop();
+              currentSoundFile.unbind("timeupdate");
 	        }
 	        currentlyPlayingSongNumber = songNumber;
 	        currentSongFromAlbum = currentAlbum.songs[songNumber - 1];
-	        //currentSongDuration = currentSongDurations[songNumber - 1];
 	        currentSoundFile = new buzz.sound(currentSongFromAlbum.audioUrl, {
 	            formats: [ 'mp3' ],
 	            preload: true
@@ -223,7 +225,7 @@ angular.module('blocJams', ['ui.router'])
            currentSoundFile.bind("timeupdate", listener);
       },
       getDuration: function() {
-          currentSoundFile.getDuration();
+          return currentSoundFile.getDuration();
       },
       pause: function() {
           currentSoundFile.pause();
@@ -263,102 +265,105 @@ angular.module('blocJams', ['ui.router'])
       }
     };
 })
-.directive('mySlider', function() {
+// .directive('mySlider', function() {
 
- //  resetSong = function(){
- //      var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
- //      if (currentSoundFile.isEnded()){
- //           if (currentSongIndex >= currentAlbum.songs.length -1) {
- //              currentSoundFile.stop();
- //              $('.album-song-button').html(playButtonTemplate);
- //              $('.left-controls .play-pause').html(playerBarPlayButton);
- //           }  
- //           else {
- //              this.nextSong();
- //          }
- //      }
- //  };
- //  var updateSeekBarWhileSongPlays = function() {
- //    if (currentSoundFile) {
- //        currentSoundFile.bind('timeupdate', function(event) {
- //            var seekBarFillRatio = this.getTime() / this.getDuration();
- //            var $seekBar = $('.seek-control .seek-bar');
- //            updateSeekPercentage($seekBar, seekBarFillRatio);
- //            setCurrentTimeInPlayerBar(this.getTime());
- //            resetSong();
- //        });
- //    }
- // };
- // var updateSeekPercentage = function($seekBar, seekBarFillRatio) {
- //    var offsetXPercent = seekBarFillRatio * 100;
- //    offsetXPercent = Math.max(0, offsetXPercent);
- //    offsetXPercent = Math.min(100, offsetXPercent);
- //    var percentageString = offsetXPercent + '%';
- //    $seekBar.find('.fill').width(percentageString);
- //    $seekBar.find('.thumb').css({left: percentageString});
- // };
+//  //  resetSong = function(){
+//  //      var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
+//  //      if (currentSoundFile.isEnded()){
+//  //           if (currentSongIndex >= currentAlbum.songs.length -1) {
+//  //              currentSoundFile.stop();
+//  //              $('.album-song-button').html(playButtonTemplate);
+//  //              $('.left-controls .play-pause').html(playerBarPlayButton);
+//  //           }  
+//  //           else {
+//  //              this.nextSong();
+//  //          }
+//  //      }
+//  //  };
+//  //  var updateSeekBarWhileSongPlays = function() {
+//  //    if (currentSoundFile) {
+//  //        currentSoundFile.bind('timeupdate', function(event) {
+//  //            var seekBarFillRatio = this.getTime() / this.getDuration();
+//  //            var $seekBar = $('.seek-control .seek-bar');
+//  //            updateSeekPercentage($seekBar, seekBarFillRatio);
+//  //            setCurrentTimeInPlayerBar(this.getTime());
+//  //            resetSong();
+//  //        });
+//  //    }
+//  // };
+//  // var updateSeekPercentage = function($seekBar, seekBarFillRatio) {
+//  //    var offsetXPercent = seekBarFillRatio * 100;
+//  //    offsetXPercent = Math.max(0, offsetXPercent);
+//  //    offsetXPercent = Math.min(100, offsetXPercent);
+//  //    var percentageString = offsetXPercent + '%';
+//  //    $seekBar.find('.fill').width(percentageString);
+//  //    $seekBar.find('.thumb').css({left: percentageString});
+//  // };
 
-     return {
-         templateUrl: 'templates/album.html',
-         restrict: 'E',
-         replace: true,
-         scope: { },
-         controller: function() {
+//      return {
+//          templateUrl: 'templates/album.html',
+//          restrict: 'E',
+//          replace: true,
+//          scope: { },
+//          controller: function() {
 
-         },
-         link: function(scope, element, attributes) {
-             // scope.value = 0;
-             // scope.doSomething = function() {
-             //     return { width: performAction() };
-             // };
-             // var $someElement = $(element);
-            element.bind('click', function () {
-                if (currentlyPlayingSongNumber === null) {
-                    return;
-                }
-                var offsetX = event.pageX - $(this).offset().left;
-                var barWidth = $(this).width();
-                var seekBarFillRatio = offsetX / barWidth;
-                if ($(this).parent().attr('class') == 'seek-control') {
-                    seek(seekBarFillRatio * currentSoundFile.getDuration());
-                    }
-                else{
-                    setVolume(seekBarFillRatio * 100);
-                }
-                updateSeekPercentage($(this), seekBarFillRatio);
-            });
-            element.bind('mousedown', function () {
-                var $seekBar = $(this).parent();
-                $(document).bind('mousemove.thumb', function(event){
-                var offsetX = event.pageX - $seekBar.offset().left;
-                var barWidth = $seekBar.width();
-                var seekBarFillRatio = offsetX / barWidth;
-                if (currentlyPlayingSongNumber === null) {
-                    return;
-                }
-                if ($seekBar.parent().attr('class') == 'seek-control') {
-                    seek(seekBarFillRatio * currentSoundFile.getDuration()); 
-                }
-                else{
-                   setVolume(seekBarFillRatio);
-                }
-                updateSeekPercentage($seekBar, seekBarFillRatio);
-                });
-                $(document).bind('mouseup.thumb', function() {
-                $(document).unbind('mousemove.thumb');
-                $(document).unbind('mouseup.thumb');
-                });
-            });
-            var $seekBars = $('.player-bar .seek-bar');
-         }
-     };
- })
+//          },
+//          link: function(scope, element, attributes) {
+//              // scope.value = 0;
+//              // scope.doSomething = function() {
+//              //     return { width: performAction() };
+//              // };
+//              // var $someElement = $(element);
+//             element.bind('click', function () {
+//                 if (currentlyPlayingSongNumber === null) {
+//                     return;
+//                 }
+//                 var offsetX = event.pageX - $(this).offset().left;
+//                 var barWidth = $(this).width();
+//                 var seekBarFillRatio = offsetX / barWidth;
+//                 if ($(this).parent().attr('class') == 'seek-control') {
+//                     seek(seekBarFillRatio * currentSoundFile.getDuration());
+//                     }
+//                 else{
+//                     setVolume(seekBarFillRatio * 100);
+//                 }
+//                 updateSeekPercentage($(this), seekBarFillRatio);
+//             });
+//             element.bind('mousedown', function () {
+//                 var $seekBar = $(this).parent();
+//                 $(document).bind('mousemove.thumb', function(event){
+//                 var offsetX = event.pageX - $seekBar.offset().left;
+//                 var barWidth = $seekBar.width();
+//                 var seekBarFillRatio = offsetX / barWidth;
+//                 if (currentlyPlayingSongNumber === null) {
+//                     return;
+//                 }
+//                 if ($seekBar.parent().attr('class') == 'seek-control') {
+//                     seek(seekBarFillRatio * currentSoundFile.getDuration()); 
+//                 }
+//                 else{
+//                    setVolume(seekBarFillRatio);
+//                 }
+//                 updateSeekPercentage($seekBar, seekBarFillRatio);
+//                 });
+//                 $(document).bind('mouseup.thumb', function() {
+//                 $(document).unbind('mousemove.thumb');
+//                 $(document).unbind('mouseup.thumb');
+//                 });
+//             });
+//             var $seekBars = $('.player-bar .seek-bar');
+//          }
+//      };
+//  })
 .filter('filterTime', function() {
 
     return function(timeInSeconds) {
       var time = parseFloat(timeInSeconds);
+      if (isNaN(time)) {return '0:00'}
+
       var wholeMinutes = Math.floor(time / 60);
       var wholeSeconds = Math.floor(time - wholeMinutes * 60);
+      
       if (wholeSeconds >= 10) {
           var formatTime = wholeMinutes + ":" + wholeSeconds;
       }
