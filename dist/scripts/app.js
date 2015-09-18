@@ -284,23 +284,23 @@ angular.module('blocJams', ['ui.router'])
 
          },
          link: function(scope, element, attributes) {
+
+             function outerWidth(el) {
+               var width = el.offsetWidth;
+               var style = getComputedStyle(el);
+
+               width += parseInt(style.marginLeft) + parseInt(style.marginRight);
+               return width;
+             };
+
              scope.jump = function (event) {
                 // if (currentlyPlayingSongNumber === null) {
                 //     return;
                 // }
                 var offsetX = event.pageX - (element[0].getBoundingClientRect().left + document.body.scrollLeft);
-                var getDocumentWidth = function () {
-                    return Math.max(
-                        document.body.scrollWidth,
-                        document.documentElement.scrollWidth,
-                        document.body.offsetWidth,
-                        document.documentElement.offsetWidth,
-                        document.body.clientWidth,
-                        document.documentElement.clientWidth
-                    );
-                };
                 var barWidth = getDocumentWidth();
-                var seekBarFillRatio = offsetX / barWidth;
+                var seekBarFillRatio = offsetX / outerWidth(element[0]);
+                console.log(seekBarFillRatio);
                 // if (element.parent().attr('class') == 'seek-control') {
                 //     seek(seekBarFillRatio * currentSoundFile.getDuration());
                 //     }
