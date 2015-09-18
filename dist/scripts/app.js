@@ -45,7 +45,8 @@ angular.module('blocJams', ['ui.router'])
  	$rootScope.bodyClass = "album";
  	$scope.togglePlay = true;
  	$scope.playingTrackIndex = null;
-    // window.skope = $scope;
+  window.skope = $scope;
+  $scope.volume = 80;
   $scope.listener = function() {
       MusicPlayer.registerProgressListener(function(){
           $scope.$apply(function(){
@@ -277,7 +278,7 @@ angular.module('blocJams', ['ui.router'])
          restrict: 'E',
          replace: true,
          scope: { 
-            // value: ''
+            value: '='
          },
          controller: function($scope) {
 
@@ -305,6 +306,7 @@ angular.module('blocJams', ['ui.router'])
                 scope.fillStyles = {width: 100 * seekBarFillRatio + '%'};
                 console.log(scope.fillStyles);
                 scope.thumbStyles = {left: scope.fillStyles.width};
+                scope.value = seekBarFillRatio * 100;
                 // if (element.parent().attr('class') == 'seek-control') {
                 //     seek(seekBarFillRatio * currentSoundFile.getDuration());
                 //     }
