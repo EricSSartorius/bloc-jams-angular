@@ -293,14 +293,18 @@ angular.module('blocJams', ['ui.router'])
                return width;
              };
 
+             scope.fillStyles = {width:0};
+
              scope.jump = function (event) {
                 // if (currentlyPlayingSongNumber === null) {
                 //     return;
                 // }
                 var offsetX = event.pageX - (element[0].getBoundingClientRect().left + document.body.scrollLeft);
-                var barWidth = getDocumentWidth();
                 var seekBarFillRatio = offsetX / outerWidth(element[0]);
                 console.log(seekBarFillRatio);
+                scope.fillStyles = {width: 100 * seekBarFillRatio + '%'};
+                console.log(scope.fillStyles);
+                scope.thumbStyles = {left: scope.fillStyles.width};
                 // if (element.parent().attr('class') == 'seek-control') {
                 //     seek(seekBarFillRatio * currentSoundFile.getDuration());
                 //     }
