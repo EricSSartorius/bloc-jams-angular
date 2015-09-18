@@ -47,6 +47,10 @@ angular.module('blocJams', ['ui.router'])
  	$scope.playingTrackIndex = null;
   window.skope = $scope;
   $scope.volume = 80;
+  $scope.$watch('volume', function(){
+     MusicPlayer.setVolume($scope.volume);
+  });
+
   $scope.listener = function() {
       MusicPlayer.registerProgressListener(function(){
           $scope.$apply(function(){
@@ -167,6 +171,7 @@ angular.module('blocJams', ['ui.router'])
 	        this.setVolume(currentVolume);
 	    },
     	setVolume: function(volume) {
+        currentVolume = volume;
         	if (currentSoundFile) {
             	currentSoundFile.setVolume(volume);
          	}
