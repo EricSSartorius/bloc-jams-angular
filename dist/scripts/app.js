@@ -45,7 +45,12 @@ angular.module('blocJams', ['ui.router'])
  	$rootScope.bodyClass = "album";
  	$scope.togglePlay = true;
  	$scope.playingTrackIndex = null;
-    // window.skope = $scope;
+  $scope.volume = 80;
+  $scope.$watch('volume', function(){
+     MusicPlayer.setVolume($scope.volume);
+        console.log($scope.volume);
+  });
+
   $scope.listener = function() {
       MusicPlayer.registerProgressListener(function(){
           $scope.$apply(function(){
@@ -67,9 +72,6 @@ angular.module('blocJams', ['ui.router'])
  	$scope.infoShow = function() {
      	return $scope.playingTrackIndex !== null;
     };
- 	$scope.setVolume = function() {
-         MusicPlayer.setVolume(volume);
-  };
   $scope.togglePlayPause = function() {
     	$scope.togglePlay = MusicPlayer.togglePlayFromPlayerBar();
     	if ($scope.playingTrackIndex === null) {
@@ -166,9 +168,10 @@ angular.module('blocJams', ['ui.router'])
 	        this.setVolume(currentVolume);
 	    },
     	setVolume: function(volume) {
-        	if (currentSoundFile) {
-            	currentSoundFile.setVolume(volume);
-         	}
+        currentVolume = volume;
+        if (currentSoundFile) {
+            currentSoundFile.setVolume(volume);
+        }
      	},
       togglePlayFromPlayerBar: function(){
           if (currentlyPlayingSongNumber === null){
@@ -277,38 +280,45 @@ angular.module('blocJams', ['ui.router'])
          restrict: 'E',
          replace: true,
          scope: { 
-            // value: ''
+            value: '=',
+            trackProgress:  '='
          },
          controller: function($scope) {
-
-
+          //
          },
          link: function(scope, element, attributes) {
-             scope.jump = function (event) {
+            scope.fillStyles = {width: 0};
+            scope.thumbStyles = {left: 0};
+            scope.jump = function (event) {
                 // if (currentlyPlayingSongNumber === null) {
                 //     return;
                 // }
                 var offsetX = event.pageX - (element[0].getBoundingClientRect().left + document.body.scrollLeft);
-                var getDocumentWidth = function () {
-                    return Math.max(
-                        document.body.scrollWidth,
-                        document.documentElement.scrollWidth,
-                        document.body.offsetWidth,
-                        document.documentElement.offsetWidth,
-                        document.body.clientWidth,
-                        document.documentElement.clientWidth
-                    );
-                };
-                var barWidth = getDocumentWidth();
+                var barWidth = element[0].offsetWidth;
                 var seekBarFillRatio = offsetX / barWidth;
+                scope.fillStyles = {width: 100 * seekBarFillRatio + '%'};
+                scope.thumbStyles = {left: scope.fillStyles.width};
+                scope.value = seekBarFillRatio * 100;
+                if (scope.value <= 0) {
+                    scope.fillStyles = {width: 0};
+                    scope.thumbStyles = {left: 0};
+                    scope.value = 0;
+                }
+                else if (scope.value >=100) {
+                    scope.fillStyles = {width: 100 + '%'};
+                    scope.thumbStyles = {left: scope.fillStyles.width};
+                    scope.value = 100;
+                }
+
                 // if (element.parent().attr('class') == 'seek-control') {
-                //     seek(seekBarFillRatio * currentSoundFile.getDuration());
+                // scope.trackProgress = seekBarFillRatio * currentSoundFile.getDuration();
                 //     }
                 // else{
                 //     setVolume(seekBarFillRatio * 100);
                 // }
                 // updateSeekPercentage(element, seekBarFillRatio);
             };
+            // };
             // element.bind('mousedown', function () {
             //     $(document).bind('mousemove.thumb', function(event){
             //     var offsetX = event.pageX - element.offset().left;
