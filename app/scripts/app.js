@@ -50,6 +50,12 @@ angular.module('blocJams', ['ui.router'])
      MusicPlayer.setVolume($scope.volume);
         console.log($scope.volume);
   });
+  $scope.$watch('trackProgress', function(){
+     MusicPlayer.setTime($scope.time);
+    　console.log("percent:" + ($scope.time / $scope.duration) * 100 + "%");
+    　console.log($scope.time);
+  });
+  window.skope = $scope;
 
   $scope.listener = function() {
       MusicPlayer.registerProgressListener(function(){
@@ -140,6 +146,17 @@ angular.module('blocJams', ['ui.router'])
     var trackIndex = function(album, song) {
         return album.songs.indexOf(song);
     };
+    resetSong = function(){
+        var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
+        if (currentSoundFile.isEnded()){
+             if (currentSongIndex >= MusicPlayer.currentAlbum.songs.length -1) {
+                currentSoundFile.stop();
+             }  
+             else {
+                this.nextSong();
+            }
+        }
+    };
     
     return { 
 	    setCurrentAlbum: function(album) {
@@ -173,6 +190,11 @@ angular.module('blocJams', ['ui.router'])
             currentSoundFile.setVolume(volume);
         }
      	},
+      setTime: function(seconds) {
+        if (currentSoundFile) {
+            currentSoundFile.setTime(seconds);
+        }
+      },
       togglePlayFromPlayerBar: function(){
           if (currentlyPlayingSongNumber === null){
               return this.nextSong();
@@ -209,9 +231,6 @@ angular.module('blocJams', ['ui.router'])
           currentSoundFile.play();
       },
       nextSong: function() {
-      //      var getLastSongNumber = function(index) {
-      //   		return index == 0 ? currentAlbum.songs.length : index;
-    	// };
        	var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
        	currentSongIndex++;
        	if (currentSongIndex >= currentAlbum.songs.length) {
@@ -219,14 +238,8 @@ angular.module('blocJams', ['ui.router'])
        	}
        	this.setSong(currentSongIndex + 1);
        	currentSoundFile.play();
-       	// updateSeekBarWhileSongPlays();
-       	// updatePlayerBarSong();
-       	// var lastSongNumber = getLastSongNumber(currentSongIndex);
       },
       previousSong: function() {
-      //   	var getLastSongNumber = function(index) {
-      //   		return index == (currentAlbum.songs.length - 1) ? 1 : index + 2;
-    	// };
         	var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
         	currentSongIndex--;
         	if (currentSongIndex < 0) {
@@ -234,65 +247,69 @@ angular.module('blocJams', ['ui.router'])
         	}
         	this.setSong(currentSongIndex + 1);
         	currentSoundFile.play();
-        	// updateSeekBarWhileSongPlays();
-        	// updatePlayerBarSong();
-        	// var lastSongNumber = getLastSongNumber(currentSongIndex);
       }
     };
 })
-.directive('mySlider', function() {
-
- //  resetSong = function(){
- //      var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
- //      if (currentSoundFile.isEnded()){
- //           if (currentSongIndex >= currentAlbum.songs.length -1) {
- //              currentSoundFile.stop();
- //              $('.album-song-button').html(playButtonTemplate);
- //              $('.left-controls .play-pause').html(playerBarPlayButton);
- //           }  
- //           else {
- //              this.nextSong();
- //          }
- //      }
- //  };
- //  var updateSeekBarWhileSongPlays = function() {
- //    if (currentSoundFile) {
- //        currentSoundFile.bind('timeupdate', function(event) {
- //            var seekBarFillRatio = this.getTime() / this.getDuration();
- //            var element = $('.seek-control .seek-bar');
- //            updateSeekPercentage(element, seekBarFillRatio);
- //            setCurrentTimeInPlayerBar(this.getTime());
- //            resetSong();
- //        });
- //    }
- // };
- // var updateSeekPercentage = function(element, seekBarFillRatio) {
- //    var offsetXPercent = seekBarFillRatio * 100;
- //    offsetXPercent = Math.max(0, offsetXPercent);
- //    offsetXPercent = Math.min(100, offsetXPercent);
- //    var percentageString = offsetXPercent + '%';
- //    element.find('.fill').width(percentageString);
- //    element.find('.thumb').css({left: percentageString});
- // };
+.directive('mySlider', function(MusicPlayer, $document) {
 
      return {
          templateUrl: 'templates/slider.html',
          restrict: 'E',
          replace: true,
          scope: { 
-            value: '=',
-            trackProgress:  '='
+            value: '='
          },
-         controller: function($scope) {
+         controller: function() {
           //
          },
          link: function(scope, element, attributes) {
-            scope.fillStyles = {width: 0};
-            scope.thumbStyles = {left: 0};
-            scope.jump = function (event) {
-                // if (currentlyPlayingSongNumber === null) {
-                //     return;
-                // }
+            scope.fillStyles = {width: scope.value + '%'};
+            scope.thumbStyles = {left: scope.fillStyles.width};
+            // scope.jump = function (event) {
+            //     var offsetX = event.pageX - (element[0].getBoundingClientRect().left + document.body.scrollLeft);
+            //     var barWidth = element[0].offsetWidth;
+            //     var seekBarFillRatio = offsetX / barWidth;
+            //     scope.fillStyles = {width: 100 * seekBarFillRatio + '%'};
+            //     scope.thumbStyles = {left: scope.fillStyles.width};
+            //     scope.value = seekBarFillRatio * 100;
+
+            //     // var seekbarPercent = ($scope.time/$scope.duration) * 100;
+            //     // console.log(seekbarPercent);
+
+            //     if (scope.value <= 0) {
+            //         scope.fillStyles = {width: 0};
+            //         scope.thumbStyles = {left: 0};
+            //         scope.value = 0;
+            //     }
+            //     else if (scope.value >=100) {
+            //         scope.fillStyles = {width: 100 + '%'};
+            //         scope.thumbStyles = {left: scope.fillStyles.width};
+            //         scope.value = 100;
+            //     }
+            //     scope.updateSeekBarWhileSongPlays();
+            // };
+            element.on('mousedown', function(event) {
+                var offsetX = event.pageX - (element[0].getBoundingClientRect().left + document.body.scrollLeft);
+                var barWidth = element[0].offsetWidth;
+                var seekBarFillRatio = offsetX / barWidth;
+                scope.fillStyles = {width: 100 * seekBarFillRatio + '%'};
+                scope.thumbStyles = {left: scope.fillStyles.width};
+                scope.value = seekBarFillRatio * 100;
+              $document.on('mousemove', mousemove);
+              $document.on('mouseup', mouseup);
+              if (scope.value <= 0) {
+                    scope.fillStyles = {width: 0};
+                    scope.thumbStyles = {left: 0};
+                    scope.value = 0;
+                }
+                else if (scope.value >=100) {
+                    scope.fillStyles = {width: 100 + '%'};
+                    scope.thumbStyles = {left: scope.fillStyles.width};
+                    scope.value = 100;
+                }
+                scope.updateSeekBarWhileSongPlays();
+            });
+            function mousemove(event) {
                 var offsetX = event.pageX - (element[0].getBoundingClientRect().left + document.body.scrollLeft);
                 var barWidth = element[0].offsetWidth;
                 var seekBarFillRatio = offsetX / barWidth;
@@ -309,37 +326,22 @@ angular.module('blocJams', ['ui.router'])
                     scope.thumbStyles = {left: scope.fillStyles.width};
                     scope.value = 100;
                 }
-
-                // if (element.parent().attr('class') == 'seek-control') {
-                // scope.trackProgress = seekBarFillRatio * currentSoundFile.getDuration();
-                //     }
-                // else{
-                //     setVolume(seekBarFillRatio * 100);
-                // }
-                // updateSeekPercentage(element, seekBarFillRatio);
+                scope.updateSeekBarWhileSongPlays();
             };
-            // };
-            // element.bind('mousedown', function () {
-            //     $(document).bind('mousemove.thumb', function(event){
-            //     var offsetX = event.pageX - element.offset().left;
-            //     var barWidth = element.width();
-            //     var seekBarFillRatio = offsetX / barWidth;
-            //     if (currentlyPlayingSongNumber === null) {
-            //         return;
-            //     }
-            //     if (element.parent().attr('class') == 'seek-control') {
-            //         seek(seekBarFillRatio * currentSoundFile.getDuration()); 
-            //     }
-            //     else{
-            //        setVolume(seekBarFillRatio);
-            //     }
-            //     updateSeekPercentage(element, seekBarFillRatio);
-            //     });
-            //     $(document).bind('mouseup.thumb', function() {
-            //     $(document).unbind('mousemove.thumb');
-            //     $(document).unbind('mouseup.thumb');
-            //     });
-            // });
+            function mouseup() {
+              $document.unbind('mousemove', mousemove);
+              $document.unbind('mouseup', mouseup);
+            };
+            scope.updateSeekBarWhileSongPlays = function() {
+                if (MusicPlayer.currentSoundFile) {
+                    MusicPlayer.currentSoundFile.bind('timeupdate', function(event) {
+                        var seekBarFillRatio = MusicPlayer.getTime() / MusicPlayer.getDuration();
+                        scope.fillStyles = {width: scope.value + '%'};
+                        scope.thumbStyles = {left: scope.fillStyles.width};
+                        MusicPlayer.resetSong();
+                    });
+                }
+            };
          }
      };
  })
