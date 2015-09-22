@@ -50,17 +50,22 @@ angular.module('blocJams', ['ui.router'])
      MusicPlayer.setVolume($scope.volume);
      console.log($scope.volume);
   });
-  $scope.$watch('trackProgress', function(){
-     MusicPlayer.setTime($scope.trackProgress);
-     console.log($scope.trackProgress);
+  //  $scope.$watch('trackProgress', function(){
+  //    MusicPlayer.setTime($scope.trackProgress);
+     // console.log($scope.trackProgress);
+  // });
+   $scope.$watch('trackProgress', function(){
+     if (Math.abs(MusicPlayer.getTime() / MusicPlayer.getDuration() * 100 - $scope.trackProgress) > 1){
+       MusicPlayer.setTime($scope.trackProgress / 100 * MusicPlayer.getDuration());
+          console.log($scope.trackProgress);
+     }
   });
   window.skope = $scope;
 
-  // $scope.updateSeekBarWhileSongPlays = function() {
-     
+  $scope.updateSeekBarWhileSongPlays = function() {
   //        MusicPlayer.currentSoundFile.bind('timeupdate', function(event) {
   //            $scope.$apply(function(){
-  //              $scope.trackProgress = (MusicPlayer.getTime() / MusicPlayer.getDuration()) * 100;
+               $scope.trackProgress = (MusicPlayer.getTime() / MusicPlayer.getDuration()) * 100;
   //            });
   //            debugger
   //            // scope.fillStyles = {width: seekBarFillRatio * 100 + '%'};
@@ -68,13 +73,14 @@ angular.module('blocJams', ['ui.router'])
   //            // MusicPlayer.setTime(MusicPlayer.getTime());
   //        });
   
-  // };
+  };
   $scope.listener = function() {
       MusicPlayer.registerProgressListener(function(){
           $scope.$apply(function(){
             $scope.updateTime();
             $scope.updateDuration();
-            $scope.trackProgress = 50;
+            $scope.updateSeekBarWhileSongPlays();
+             console.log($scope.trackProgress);
           })
       });
   };
@@ -99,7 +105,6 @@ angular.module('blocJams', ['ui.router'])
       if (!$scope.togglePlay || ($scope.togglePlay && $scope.playingTrackIndex === null)) {
           $scope.listener();
       }
-      $scope.updateSeekBarWhileSongPlays();
   };
   $scope.enterHover = function(index) {
       $scope.hoveredIndex = index;
@@ -126,7 +131,6 @@ angular.module('blocJams', ['ui.router'])
 		MusicPlayer.play();
     $scope.listener();
 		$scope.togglePlay = false;
-    $scope.updateSeekBarWhileSongPlays();
   };
 	$scope.nextSong = function() {
         MusicPlayer.nextSong();
@@ -281,29 +285,33 @@ angular.module('blocJams', ['ui.router'])
             scope.fillStyles = {width: scope.value + '%'};
             scope.thumbStyles = {left: scope.fillStyles.width};
 
-            scope.jump = function (event) {
-                var offsetX = event.pageX - (element[0].getBoundingClientRect().left + document.body.scrollLeft);
-                var barWidth = element[0].offsetWidth;
-                var seekBarFillRatio = offsetX / barWidth;
-                scope.fillStyles = {width: 100 * seekBarFillRatio + '%'};
-                scope.thumbStyles = {left: scope.fillStyles.width};
-                scope.value = seekBarFillRatio * 100;
+            // scope.$watch('trackProgress', function(){
+            //   scope.fillStyles = {width: scope.value + '%'};
+            //   scope.thumbStyles = {left: scope.fillStyles.width};
+            // });
+            // scope.jump = function (event) {
+            //     var offsetX = event.pageX - (element[0].getBoundingClientRect().left + document.body.scrollLeft);
+            //     var barWidth = element[0].offsetWidth;
+            //     var seekBarFillRatio = offsetX / barWidth;
+            //     scope.fillStyles = {width: 100 * seekBarFillRatio + '%'};
+            //     scope.thumbStyles = {left: scope.fillStyles.width};
+            //     scope.value = seekBarFillRatio * 100;
 
-                // var seekbarPercent = ($scope.time/$scope.duration) * 100;
-                // console.log(seekbarPercent);
+            //     var seekbarPercent = ($scope.time/$scope.duration) * 100;
+            //     console.log(seekbarPercent);
 
-                if (scope.value <= 0) {
-                    scope.fillStyles = {width: 0};
-                    scope.thumbStyles = {left: 0};
-                    scope.value = 0;
-                }
-                else if (scope.value >=100) {
-                    scope.fillStyles = {width: 100 + '%'};
-                    scope.thumbStyles = {left: scope.fillStyles.width};
-                    scope.value = 100;
-                }
+            //     if (scope.value <= 0) {
+            //         scope.fillStyles = {width: 0};
+            //         scope.thumbStyles = {left: 0};
+            //         scope.value = 0;
+            //     }
+            //     else if (scope.value >=100) {
+            //         scope.fillStyles = {width: 100 + '%'};
+            //         scope.thumbStyles = {left: scope.fillStyles.width};
+            //         scope.value = 100;
+            //     }
                
-            };
+            // };
             element.on('mousedown', function(event) {
                 var offsetX = event.pageX - (element[0].getBoundingClientRect().left + document.body.scrollLeft);
                 var barWidth = element[0].offsetWidth;
@@ -342,7 +350,7 @@ angular.module('blocJams', ['ui.router'])
                     scope.thumbStyles = {left: scope.fillStyles.width};
                     scope.value = 100;
                 }
-                
+                scope.$apply()
             };
             function mouseup() {
                 $document.unbind('mousemove', mousemove);
