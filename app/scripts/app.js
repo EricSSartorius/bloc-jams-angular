@@ -285,10 +285,10 @@ angular.module('blocJams', ['ui.router'])
             scope.fillStyles = {width: scope.value + '%'};
             scope.thumbStyles = {left: scope.fillStyles.width};
 
-            // scope.$watch('trackProgress', function(){
-            //   scope.fillStyles = {width: scope.value + '%'};
-            //   scope.thumbStyles = {left: scope.fillStyles.width};
-            // });
+             scope.$watch('value', function(){
+               scope.fillStyles = {width: scope.value + '%'};
+               scope.thumbStyles = {left: scope.fillStyles.width};
+             });
             // scope.jump = function (event) {
             //     var offsetX = event.pageX - (element[0].getBoundingClientRect().left + document.body.scrollLeft);
             //     var barWidth = element[0].offsetWidth;
