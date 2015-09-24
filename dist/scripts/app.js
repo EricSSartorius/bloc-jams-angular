@@ -48,38 +48,38 @@ angular.module('blocJams', ['ui.router'])
   $scope.volume = 80;
   $scope.$watch('volume', function(){
      MusicPlayer.setVolume($scope.volume);
-     console.log($scope.volume);
   });
   //  $scope.$watch('trackProgress', function(){
   //    MusicPlayer.setTime($scope.trackProgress);
      // console.log($scope.trackProgress);
   // });
-   $scope.$watch('trackProgress', function(){
-     if (Math.abs(MusicPlayer.getTime() / MusicPlayer.getDuration() * 100 - $scope.trackProgress) > 1){
-       MusicPlayer.setTime($scope.trackProgress / 100 * MusicPlayer.getDuration());
-          console.log($scope.trackProgress);
-     }
-  });
+  // if($scope.playingTrackIndex !== null) {
+     $scope.$watch('trackProgress', function(){
+       if (Math.abs(MusicPlayer.getTime() / MusicPlayer.getDuration() * 100 - $scope.trackProgress) > 1){
+         MusicPlayer.setTime($scope.trackProgress / 100 * MusicPlayer.getDuration());
+       }
+    });
+  // }
   window.skope = $scope;
 
-  $scope.updateSeekBarWhileSongPlays = function() {
-  //        MusicPlayer.currentSoundFile.bind('timeupdate', function(event) {
-  //            $scope.$apply(function(){
-               $scope.trackProgress = (MusicPlayer.getTime() / MusicPlayer.getDuration()) * 100;
-  //            });
-  //            debugger
-  //            // scope.fillStyles = {width: seekBarFillRatio * 100 + '%'};
-  //            // scope.thumbStyles = {left: scope.fillStyles.width};
-  //            // MusicPlayer.setTime(MusicPlayer.getTime());
-  //        });
+  // $scope.updateSeekBarWhileSongPlays = function() {
+  // //        MusicPlayer.currentSoundFile.bind('timeupdate', function(event) {
+  // //            $scope.$apply(function(){
+  //              $scope.trackProgress = (MusicPlayer.getTime() / MusicPlayer.getDuration()) * 100;
+  // //            });
+  // //            debugger
+  // //            // scope.fillStyles = {width: seekBarFillRatio * 100 + '%'};
+  // //            // scope.thumbStyles = {left: scope.fillStyles.width};
+  // //            // MusicPlayer.setTime(MusicPlayer.getTime());
+  // //        });
   
-  };
+  // };
   $scope.listener = function() {
       MusicPlayer.registerProgressListener(function(){
           $scope.$apply(function(){
             $scope.updateTime();
             $scope.updateDuration();
-            $scope.updateSeekBarWhileSongPlays();
+            // $scope.updateSeekBarWhileSongPlays();
              console.log($scope.trackProgress);
           })
       });
@@ -287,7 +287,9 @@ angular.module('blocJams', ['ui.router'])
 
             // scope.$watch('trackProgress', function(){
             //   scope.fillStyles = {width: scope.value + '%'};
+            //   // scope.fillStyles = {width: this.seekBarFillRatio * 100 + '%'};
             //   scope.thumbStyles = {left: scope.fillStyles.width};
+
             // });
             // scope.jump = function (event) {
             //     var offsetX = event.pageX - (element[0].getBoundingClientRect().left + document.body.scrollLeft);
