@@ -44,12 +44,13 @@ angular.module('blocJams', ['ui.router'])
  	MusicPlayer.setCurrentAlbum(albumPicasso);
  	$rootScope.bodyClass = "album"; 
  	$scope.playingTrackIndex = MusicPlayer.currentSongIndex();
-  $scope.togglePlay = $scope.playingTrackIndex === null;
-
+  $scope.togglePlay = $scope.playingTrackIndex === null || MusicPlayer.isPaused();
   $scope.volume = 80;
+
   $scope.$watch('volume', function(){
     MusicPlayer.setVolume($scope.volume);
   });
+
   $scope.$watch('trackProgress', function(){
     if($scope.trackProgress === undefined) {
       return;
@@ -144,6 +145,13 @@ angular.module('blocJams', ['ui.router'])
       $scope.listener();
       $scope.togglePlay = false;
   };
+
+  if ($scope.playingTrackIndex !== null) {
+    $scope.updateTime();
+    $scope.updateDuration();
+    $scope.updateSeekBarWhileSongPlays();
+  }
+
  })
 .controller('Collection.controller', function ($scope, $rootScope) {
 	$scope.albums = [albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits];
@@ -234,16 +242,9 @@ angular.module('blocJams', ['ui.router'])
       },
       currentSongIndex: function(){
           if (currentSoundFile) {
-            if (currentSoundFile.isPaused()) {
-              return null;
-            }
-            else {
-              return trackIndex(currentAlbum, currentSongFromAlbum);
-            }
+             return trackIndex(currentAlbum, currentSongFromAlbum);
           }
-          else {
-            return null;
-          }
+          return null;
       },
       nextSong: function() {
          	var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
