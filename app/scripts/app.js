@@ -283,7 +283,14 @@ angular.module('blocJams', ['ui.router'])
                scope.fillStyles = {width: (scope.value || 0) + '%'};
                scope.thumbStyles = {left: scope.fillStyles.width};
             });
-
+            scope.setBarLimits = function() {
+                if (scope.value <= 0) {
+                      scope.value = 0;
+                }
+                else if (scope.value >=100) {
+                      scope.value = 100;
+                }
+            };
             element.on('mousedown', function(event) {
                 if(scope.value === undefined) {
                   return;
@@ -291,39 +298,17 @@ angular.module('blocJams', ['ui.router'])
                 var offsetX = event.pageX - (element[0].getBoundingClientRect().left + document.body.scrollLeft);
                 var barWidth = element[0].offsetWidth;
                 var seekBarFillRatio = offsetX / barWidth;
-                scope.fillStyles = {width: 100 * seekBarFillRatio + '%'};
-                scope.thumbStyles = {left: scope.fillStyles.width};
                 scope.value = seekBarFillRatio * 100;
                 $document.on('mousemove', mousemove);
                 $document.on('mouseup', mouseup);
-                if (scope.value <= 0) {
-                      scope.fillStyles = {width: 0};
-                      scope.thumbStyles = {left: 0};
-                      scope.value = 0;
-                }
-                else if (scope.value >=100) {
-                      scope.fillStyles = {width: 100 + '%'};
-                      scope.thumbStyles = {left: scope.fillStyles.width};
-                      scope.value = 100;
-                }
+                scope.setBarLimits();
             });
             function mousemove(event) {
                 var offsetX = event.pageX - (element[0].getBoundingClientRect().left + document.body.scrollLeft);
                 var barWidth = element[0].offsetWidth;
                 var seekBarFillRatio = offsetX / barWidth;
-                scope.fillStyles = {width: 100 * seekBarFillRatio + '%'};
-                scope.thumbStyles = {left: scope.fillStyles.width};
                 scope.value = seekBarFillRatio * 100;
-                if (scope.value <= 0) {
-                    scope.fillStyles = {width: 0};
-                    scope.thumbStyles = {left: 0};
-                    scope.value = 0;
-                }
-                else if (scope.value >=100) {
-                    scope.fillStyles = {width: 100 + '%'};
-                    scope.thumbStyles = {left: scope.fillStyles.width};
-                    scope.value = 100;
-                }
+                scope.setBarLimits();
                 scope.$apply()
             };
             function mouseup() {
@@ -334,7 +319,6 @@ angular.module('blocJams', ['ui.router'])
      };
  })
 .filter('filterTime', function() {
-
     return function(timeInSeconds) {
       var time = parseFloat(timeInSeconds);
       if (isNaN(time)) {
