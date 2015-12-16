@@ -151,7 +151,7 @@ angular.module('blocJams', ['ui.router'])
   }
  })
 .controller('Collection.controller', function ($scope, $rootScope) {
-	$scope.albums = [albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits,albumPicasso, albumMarconi, albumFruits];
+	$scope.albums = [albumPicasso];
 	$rootScope.bodyClass = "collection";
  })
 .factory('MusicPlayer', function() {
