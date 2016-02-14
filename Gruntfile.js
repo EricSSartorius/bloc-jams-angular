@@ -12,7 +12,7 @@ module.exports = function(grunt) {
             hapi: {
                 files: [
                     './app/assets/**/*.{png,jpg,jpeg,mp3}',
-                    './app/scripts/**/*.js',
+                    './app/scripts/min/**/*.js',
                     './app/styles/**/*.css',
                     './app/pages/**/*.html',
                     './app/templates/**/*.html',
@@ -49,7 +49,7 @@ module.exports = function(grunt) {
                     expand: true,
                     src: [ './**/*.js' ],
                     dest: './dist/scripts',
-                    cwd: './app/scripts'
+                    cwd: './app/scripts/min'
                 }, {
                     expand: true,
                     src: [ './**/*.html' ],
