@@ -25,7 +25,7 @@ angular.module('blocJams', ['ui.router'])
           		templateUrl: '/templates/collection.html',
       		});
 	})
-.controller('Landing.controller', function ($scope, $rootScope) {
+.controller('Landing.controller',['$scope', '$rootScope', function ($scope, $rootScope) {
  	$scope.landingTitle = 'Turn the music up!';
  	$rootScope.bodyClass = "landing";
  	var points = document.getElementsByClassName('point');       
@@ -38,8 +38,8 @@ angular.module('blocJams', ['ui.router'])
         }
     };
     revealPoint();   
- })
-.controller('Album.controller', function ($scope, $rootScope, MusicPlayer) {
+ }])
+.controller('Album.controller', ['$scope', '$rootScope','MusicPlayer', function ($scope, $rootScope, MusicPlayer) {
  	$scope.album = albumPicasso;
  	MusicPlayer.setCurrentAlbum(albumPicasso);
  	$rootScope.bodyClass = "album"; 
@@ -149,11 +149,11 @@ angular.module('blocJams', ['ui.router'])
       $scope.updateDuration();
       $scope.updateSeekBarWhileSongPlays();
   }
- })
-.controller('Collection.controller', function ($scope, $rootScope) {
+ }])
+.controller('Collection.controller', ['$scope', '$rootScope', function ($scope, $rootScope) {
 	$scope.albums = [albumPicasso];
 	$rootScope.bodyClass = "collection";
- })
+ }])
 .factory('MusicPlayer', function() {
     var currentAlbum = null;
     var currentlyPlayingSongNumber = null;
@@ -263,7 +263,7 @@ angular.module('blocJams', ['ui.router'])
       }
     };
 })
-.directive('mySlider', function(MusicPlayer, $document) {
+.directive('mySlider', ['MusicPlayer', '$document', function(MusicPlayer, $document) {
 
      return {
          templateUrl: 'templates/slider.html',
@@ -315,7 +315,7 @@ angular.module('blocJams', ['ui.router'])
             };
          }
      };
- })
+ }])
 .filter('filterTime', function() {
     return function(timeInSeconds) {
       var time = parseFloat(timeInSeconds);

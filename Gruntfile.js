@@ -1,8 +1,8 @@
 module.exports = function(grunt) {
 
-    grunt.registerTask( 'default', [ 'clean', 'uglify', 'concat_css', 'cssmin', 'copy', 'hapi', 'watch'] );
+    grunt.registerTask( 'default', [ 'clean',  'concat_css', 'cssmin', 'copy', 'hapi', 'watch'] );
 
-    grunt.registerTask( 'build', [ 'clean', 'uglify', 'concat_css', 'cssmin', 'copy' ] );
+    grunt.registerTask( 'build', [ 'clean',  'concat_css', 'cssmin', 'copy' ] );
 
     grunt.registerTask( 'run', [ 'hapi', 'watch' ]);
 
@@ -20,7 +20,6 @@ module.exports = function(grunt) {
                 ],
                 tasks: [
                     'clean',
-                    'uglify',
                     'concat_css',
                     'cssmin',
                     'copy'
@@ -51,15 +50,6 @@ module.exports = function(grunt) {
               ext: '.min.css'
             }]
           }
-        },
-
-        uglify: {
-            my_target: {
-              files: [{
-                './app/scripts/min/fixtures.min.js': ['./app/scripts/fixtures.js']},
-                {'./app/scripts/min/app.min.js': ['./app/scripts/app.js']
-              }]
-            }
         },
 
         copy: {
@@ -106,7 +96,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-hapi');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-concat-css');
 
