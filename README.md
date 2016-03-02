@@ -19,6 +19,6 @@ Currently, a json is used for the CD information. However, with connection to an
 - Grunt
 - AngularJS
 
-The [AngularJS version](https://bloc-jams-angularjs.herokuapp.com/landing) of Bloc Jams has been deployed but is no longer maintained.
+The AngularJS version of [Bloc Jams](https://bloc-jams-angularjs.herokuapp.com/landing) has been deployed but is no longer maintained.
 
 
