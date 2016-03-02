@@ -7,7 +7,7 @@ The original Bloc Jams can be found at my [Bloc Jams Repo.](https://github.com/E
 ###About
 
 For my first assignment at Bloc, I was to create a simple SPA like Spotify that has the ability to play music.
-Since the main focus was on functionality, the images were given to us ahead of time, only one CD (Colors) can be played, and the a mockup was pre-determined.
+Since the main focus was on functionality, the images were given to us ahead of time, only one album (Colors) can be played, and the a mockup was pre-determined.
 
 UI-Router is used for seemless transition between the landing, collection, and album views.
 After setting up the landing page and collection views, most time was spent creating and setting up the album view. This was done by using a directive for the player bar and a factory for most of the song playing logic. 
