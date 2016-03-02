@@ -2,7 +2,7 @@
 
 Bloc Jams is an SPA designed in Bloc's [Frontend Web Development Course](https://www.bloc.io/frontend-development-bootcamp).
 This is a refactor of Bloc Jams from jQuery to AngularJS. I created Bloc Jams in JavaScript, then refactored in jQuery, and last in AngularJS for learning purposes.
-The original Bloc Jams can be found at my [Bloc Jams Repo](https://github.com/EricSSartorius/bloc-jams) 
+The original Bloc Jams can be found at my [Bloc Jams Repo.](https://github.com/EricSSartorius/bloc-jams) 
 
 ###About
 
